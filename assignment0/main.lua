@@ -39,6 +39,11 @@ require 'Paddle'
 -- but which will mechanically function very differently
 require 'Ball'
 
+--Controllers for human players and bot players respectively
+require 'HumanController'
+require 'BotController'
+
+
 -- size of our actual window
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -90,8 +95,8 @@ function love.load()
 
     -- initialize our player paddles; make them global so that they can be
     -- detected by other functions and modules
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    player1 = Paddle(10, 30, 5, 20, PADDLE_SPEED)
+    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED)
 
     -- place a ball in the middle of the screen
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
@@ -114,6 +119,13 @@ function love.load()
     -- 3. 'play' (the ball is in play, bouncing between paddles)
     -- 4. 'done' (the game is over, with a victor, ready for restart)
     gameState = 'start'
+
+    -- gameMode: used to create a simple menu to give the player the following options:
+    -- 1 -> 'bvb' : both players are set to bot controllers.
+    -- 2 -> 'pvb' : left player (player1) is set to HumanController, right player (player2) is set to BotController.
+    -- 3 -> 'pvp' : both players are set to HumanControllers.
+    -- By default is set to bvb just because is the first option on the menu.
+    gameMode = 1
 end
 
 --[[
@@ -135,7 +147,22 @@ end
     across system hardware.
 ]]
 function love.update(dt)
-    if gameState == 'serve' then
+    if gameState == 'load' then
+        --This state is transparent to the user. It's used to set the controllers according to gameMode
+        if gameMode == 1 then
+            Controller1 = BotController(player1, ball)
+            Controller2 = BotController(player2, ball)
+        elseif gameMode == 2 then
+            Controller1 = HumanController(player1, 1)
+            Controller2 = BotController(player2, ball)
+        elseif gameMode == 3 then
+            Controller1 = HumanController(player1, 1)
+            Controller2 = HumanController(player2, 2)
+        end
+
+        gameState = 'serve'
+
+    elseif gameState == 'serve' then
         -- before switching to play, initialize ball's velocity based
         -- on player who last scored
         ball.dy = math.random(-50, 50)
@@ -227,27 +254,11 @@ function love.update(dt)
                 ball:reset()
             end
         end
-    end
+    end 
 
-    --
-    -- paddles can move no matter what state we're in
-    --
-    -- player 1
-    if love.keyboard.isDown('w') then
-        player1.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('s') then
-        player1.dy = PADDLE_SPEED
-    else
-        player1.dy = 0
-    end
-
-    -- player 2
-    if love.keyboard.isDown('up') then
-        player2.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('down') then
-        player2.dy = PADDLE_SPEED
-    else
-        player2.dy = 0
+    if gameState == 'serve' or gameState == 'play' then
+        Controller1:control()
+        Controller2:control()
     end
 
     -- update our ball based on its DX and DY only if we're in play state;
@@ -275,13 +286,14 @@ function love.keypressed(key)
     -- transition to the next appropriate state
     elseif key == 'enter' or key == 'return' then
         if gameState == 'start' then
-            gameState = 'serve'
+            sounds['score']:play()
+            gameState = 'load'
         elseif gameState == 'serve' then
             gameState = 'play'
         elseif gameState == 'done' then
             -- game is simply in a restart phase here, but will set the serving
             -- player to the opponent of whomever won for fairness!
-            gameState = 'serve'
+            gameState = 'start'
 
             ball:reset()
 
@@ -294,6 +306,24 @@ function love.keypressed(key)
                 servingPlayer = 2
             else
                 servingPlayer = 1
+            end
+        end
+    end
+    if key == 'w' or key == 'up' then 
+        if gameState == 'start' then
+            gameMode = gameMode - 1
+            sounds['paddle_hit']:play()
+            if gameMode < 1 then
+                gameMode = 3
+            end
+        end
+    end
+    if key == 's' or key == 'down' then
+        if gameState == 'start' then
+            gameMode = gameMode + 1
+            sounds['paddle_hit']:play()
+            if gameMode > 3 then
+                gameMode = 1
             end
         end
     end
@@ -314,15 +344,46 @@ function love.draw()
         -- UI messages
         love.graphics.setFont(smallFont)
         love.graphics.printf('Welcome to Pong!', 0, 10, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf('Press Enter to begin!', 0, 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Select game mode', 0, 20, VIRTUAL_WIDTH, 'center')
+        if gameMode == 1 then 
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.printf('Bot vs Bot', 0, 100, VIRTUAL_WIDTH, 'center')
+            love.graphics.setColor(20, 20, 20, 255)
+            love.graphics.printf('Player vs Bot', 0, 115, VIRTUAL_WIDTH, 'center')
+            love.graphics.printf('Player vs Player', 0, 130, VIRTUAL_WIDTH, 'center')
+        elseif gameMode == 2 then 
+            love.graphics.setColor(20, 20, 20, 255)
+            love.graphics.printf('Bot vs Bot', 0, 100, VIRTUAL_WIDTH, 'center')
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.printf('Player vs Bot', 0, 115, VIRTUAL_WIDTH, 'center')
+            love.graphics.setColor(20, 20, 20, 255)
+            love.graphics.printf('Player vs Player', 0, 130, VIRTUAL_WIDTH, 'center')
+        else 
+            love.graphics.setColor(20, 20, 20, 255)
+            love.graphics.printf('Bot vs Bot', 0, 100, VIRTUAL_WIDTH, 'center')
+            love.graphics.printf('Player vs Bot', 0, 115, VIRTUAL_WIDTH, 'center')
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.printf('Player vs Player', 0, 130, VIRTUAL_WIDTH, 'center')
+        end
+
     elseif gameState == 'serve' then
         -- UI messages
         love.graphics.setFont(smallFont)
         love.graphics.printf('Player ' .. tostring(servingPlayer) .. "'s serve!", 
             0, 10, VIRTUAL_WIDTH, 'center')
         love.graphics.printf('Press Enter to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
+        displayScore()
+    
+        player1:render()
+        player2:render()
+        ball:render()
     elseif gameState == 'play' then
         -- no UI messages to display in play
+        displayScore()
+    
+        player1:render()
+        player2:render()
+        ball:render()
     elseif gameState == 'done' then
         -- UI messages
         love.graphics.setFont(largeFont)
@@ -331,13 +392,6 @@ function love.draw()
         love.graphics.setFont(smallFont)
         love.graphics.printf('Press Enter to restart!', 0, 30, VIRTUAL_WIDTH, 'center')
     end
-
-    -- show the score before ball is rendered so it can move over the text
-    displayScore()
-    
-    player1:render()
-    player2:render()
-    ball:render()
 
     -- display FPS for debugging; simply comment out to remove
     displayFPS()
