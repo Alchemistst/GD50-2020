@@ -7,7 +7,6 @@
     Used to represent a pair of pipes that stick together as they scroll, providing an opening
     for the player to jump through in order to score a point.
 ]]
-
 PipePair = Class{}
 
 function PipePair:init(y, randomPipeGap)
@@ -15,8 +14,8 @@ function PipePair:init(y, randomPipeGap)
     self.scored = false
 
     -- initialize pipes past the end of the screen
-    self.x = VIRTUAL_WIDTH + 32
-
+    self.x = VIRTUAL_WIDTH + math.random(0, 130-PIPE_WIDTH) --This way we randomize the horizontal spacing of pipes, but we make sure the never spawn on top of each other.
+   
     -- y value is for the topmost pipe; gap is a vertical shift of the second lower pipe
     self.y = y
 
