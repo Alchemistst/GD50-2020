@@ -4,6 +4,7 @@ In this assigment we were told to add some extra features to the Fifty Bird (Fla
 * Randomize horizontal spacing of pipes.
 * Set medal awards based on score.
 * Implement pause/resume feature.
+  
 As an extra, I also fixed it so the bird can't go above the visible screen, over the pipes, and cheat the game.
 
 ## Requirements
