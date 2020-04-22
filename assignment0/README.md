@@ -11,6 +11,6 @@ You need **Lua** and **Löve2D 0.10.2**.
 3. Run ``` love . ```
 
 ## Screenshots
-![alt text](https://github.com/Alchemistst/GD50-2020/tree/master/assignment0/screenshots/pong_menu.png "pong_menu")
-![alt text](https://github.com/Alchemistst/GD50-2020/tree/master/assignment0/screenshots/pong_gameplay_1.png "pong_gameplay_1")
-![alt text](https://github.com/Alchemistst/GD50-2020/tree/master/assignment0/screenshots/pong_gameplay_2.png "pong_gameplay_2")
+![alt text](/screenshots/pong_menu.png "pong_menu")
+![alt text](/screenshots/pong_gameplay_1.png "pong_gameplay_1")
+![alt text](/screenshots/pong_gameplay_2.png "pong_gameplay_2")
