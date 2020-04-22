@@ -104,6 +104,18 @@ function PlayState:update(dt)
             score = self.score
         })
     end
+
+    --pause the game if "p" key is pressed
+    if love.keyboard.wasPressed("p") then
+        gStateMachine:change('pause', {['currentGame'] = 
+            {
+            ['currentBird'] = self.bird,
+            ['currentPipePairs'] = self.pipePairs,
+            ['currentTimer'] = self.timer,
+            ['currentScore'] = self.score,
+            ['currentLastY'] = self.lastY
+        }})
+    end
 end
 
 function PlayState:render()
@@ -120,9 +132,19 @@ end
 --[[
     Called when this state is transitioned to from another state.
 ]]
-function PlayState:enter()
+function PlayState:enter(enterParams)
     -- if we're coming from death, restart scrolling
     scrolling = true
+    if(enterParams) then
+        local currentGame = enterParams['currentGame']
+        self.bird = currentGame['currentBird']
+        self.pipePairs = currentGame['currentPipePairs']
+        self.timer = currentGame['currentTimer']
+        self.score = currentGame['currentScore']
+
+        -- initialize our last recorded Y value for a gap placement to base other gaps off of
+        self.lastY = currentGame['currentLastY']
+    end
 end
 
 --[[
