@@ -42,15 +42,16 @@ function Bird:collides(pipe)
 end
 
 function Bird:update(dt)
-    self.dy = self.dy + GRAVITY * dt
+    self.dy = self.dy + GRAVITY * dt 
 
     -- burst of anti-gravity when space or left mouse are pressed
     if love.keyboard.wasPressed('space') or love.mouse.wasPressed(1) then
         self.dy = -5
         sounds['jump']:play()
     end
-
-    self.y = self.y + self.dy
+    
+    --To prevent the bird to go over the screen and above the pipes, cheating the game, added a constrain with math.max, so birds self.y can't be smaller then -30
+    self.y = math.max(self.y + self.dy, -30)
 end
 
 function Bird:render()
