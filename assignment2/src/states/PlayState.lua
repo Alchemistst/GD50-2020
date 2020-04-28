@@ -95,10 +95,11 @@ function PlayState:update(dt)
                 brick:hit()
                 
                 -- TODO: spawn powerup
-                if math.random(4) == 1 then
+                if math.random(10) == 1 then
                     self:spawnPowerup(brick.x +16, brick.y+8)
                 end
                 
+                --[[
 
                 -- if we have enough points, recover a point of health
                 if self.score > self.recoverPoints then
@@ -111,6 +112,9 @@ function PlayState:update(dt)
                     -- play recover sound effect
                     gSounds['recover']:play()
                 end
+
+                ]]
+                
 
                 -- go to our victory screen if there are no more bricks left
                 if self:checkVictory() then
@@ -235,7 +239,7 @@ function PlayState:update(dt)
 
             print("Powerup acquired") --Debug
             if powerup.type == 'growth' then
-                self.paddle.size = 3
+                self.paddle.size = math.min(self.paddle.size + 1, 4)
             elseif powerup.type == 'doubleBall' then
                 --Create new ball
                 local newBall = Ball()
@@ -247,6 +251,9 @@ function PlayState:update(dt)
                 newBall.dx = math.random(-200, 200)
                 newBall.dy = math.random(-50, -60)
                 table.insert(self.balls, newBall)
+            elseif powerup.type == 'heart' then
+                self.health = math.min(3, self.health + 1)
+                gSounds['recover']:play()
             end
 
             table.remove(self.activePowerups, k)
@@ -304,7 +311,7 @@ end
 function PlayState:spawnPowerup(x, y)
     local p_type = POWERUP_LIST[math.random(3)]
     --TODO: CHANGE BACK TO P_TYPE
-    local p = Powerup(x, y, 'doubleBall') --So the powerup spawns in the middle of the block
+    local p = Powerup(x, y, p_type) --So the powerup spawns in the middle of the block
     table.insert(self.activePowerups, p)
  
 end
