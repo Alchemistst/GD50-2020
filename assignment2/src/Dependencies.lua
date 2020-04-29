@@ -50,3 +50,6 @@ require 'src/states/VictoryState'
 
 -- a class used to generate powerups
 require 'src/Powerup'
+
+-- a class used to generate LockedBricks
+require 'src/LockedBrick'

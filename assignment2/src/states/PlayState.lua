@@ -21,8 +21,10 @@ PlayState = Class{__includes = BaseState}
     states as we go from playing to serving.
 ]]
 function PlayState:enter(params)
+    print (params.lockedBrick)
     self.paddle = params.paddle
     self.bricks = params.bricks
+    self.lockedBrick = params.lockedBrick
     self.health = params.health
     self.score = params.score
     self.highScores = params.highScores
@@ -37,6 +39,9 @@ function PlayState:enter(params)
     
     --initialize table of powerups
     self.activePowerups = {}
+
+    self.keyWasDropped = params.keyWasDropped and true or false
+    self.keyAcquired = params.keyAcquired and true or false
 end
 
 function PlayState:update(dt)
@@ -92,11 +97,18 @@ function PlayState:update(dt)
                 self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
                 -- trigger the brick's hit function, which removes it from play
-                brick:hit()
+                brick:hit(self.keyAcquired)
                 
                 -- TODO: spawn powerup
                 if math.random(10) == 1 then
                     self:spawnPowerup(brick.x +16, brick.y+8)
+                end
+
+                if self.lockedBrick and not self.keyWasDropped then
+                    if math.random(#self.bricks) <= 2 then
+                        self:spawnPowerup(brick.x +16, brick.y+8, true)
+                        self.keyWasDropped = true
+                    end
                 end
                 
                 --[[
@@ -196,7 +208,7 @@ function PlayState:update(dt)
                     gSounds['hurt']:play()
             
                     --Also, if a powerup was augmenting the paddle, resize it to normal
-                    self.paddle.size = 2
+                    self.paddle:setSize(2)
             
             
                     if self.health == 0 then
@@ -208,11 +220,13 @@ function PlayState:update(dt)
                         gStateMachine:change('serve', {
                             paddle = self.paddle,
                             bricks = self.bricks,
+                            lockedBrick = self.lockedBrick,
                             health = self.health,
                             score = self.score,
                             highScores = self.highScores,
                             level = self.level,
-                            recoverPoints = self.recoverPoints
+                            recoverPoints = self.recoverPoints,
+                            keyWasDropped = self.keyWasDropped
                         })
                     end
                 end
@@ -239,7 +253,8 @@ function PlayState:update(dt)
 
             print("Powerup acquired") --Debug
             if powerup.type == 'growth' then
-                self.paddle.size = math.min(self.paddle.size + 1, 4)
+                self.paddle:setSize(math.min(self.paddle.size + 1, 4))
+
             elseif powerup.type == 'doubleBall' then
                 --Create new ball
                 local newBall = Ball()
@@ -254,6 +269,8 @@ function PlayState:update(dt)
             elseif powerup.type == 'heart' then
                 self.health = math.min(3, self.health + 1)
                 gSounds['recover']:play()
+            elseif powerup.type == 'key' then
+                self.keyAcquired = true
             end
 
             table.remove(self.activePowerups, k)
@@ -308,8 +325,8 @@ end
 
 
 
-function PlayState:spawnPowerup(x, y)
-    local p_type = POWERUP_LIST[math.random(3)]
+function PlayState:spawnPowerup(x, y, key)
+    local p_type = key and "key" or POWERUP_LIST[math.random(3)]
     --TODO: CHANGE BACK TO P_TYPE
     local p = Powerup(x, y, p_type) --So the powerup spawns in the middle of the block
     table.insert(self.activePowerups, p)

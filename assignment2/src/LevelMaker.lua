@@ -122,10 +122,22 @@ function LevelMaker.createMap(level)
         end
     end 
 
+    -- randomly choose  wether this level contains locked brick
+    local isSurprise =  true -- TODO: CHANGE TO math.random(2) == 1 and true or false
+    
+    
+    if isSurprise then
+        local randomPos = math.random(#bricks)
+        local lockedBrick = LockedBrick(bricks[randomPos])
+        bricks[randomPos] = lockedBrick
+    end
+    
+ 
+
     -- in the event we didn't generate any bricks, try again
     if #bricks == 0 then
         return self.createMap(level)
     else
-        return bricks
+        return {["bricks"] = bricks, ["lockedBrick"] = isSurprise}
     end
 end
