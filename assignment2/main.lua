@@ -93,6 +93,11 @@ function love.load()
         ['hurt'] = love.audio.newSource('sounds/hurt.wav'),
         ['victory'] = love.audio.newSource('sounds/victory.wav'),
         ['recover'] = love.audio.newSource('sounds/recover.wav'),
+        ['key']= love.audio.newSource('sounds/key.wav'),
+        ['growth']= love.audio.newSource('sounds/growth.wav'),
+        ['unlockedBrick']= love.audio.newSource('sounds/unlockedBrick.wav'),
+        ['lockedBrick']= love.audio.newSource('sounds/lockedBrick.wav'),
+        ['doubleBall']= love.audio.newSource('sounds/doubleBall.wav'),
         ['high-score'] = love.audio.newSource('sounds/high_score.wav'),
         ['pause'] = love.audio.newSource('sounds/pause.wav'),
 
@@ -303,4 +308,13 @@ function renderScore(score)
     love.graphics.setFont(gFonts['small'])
     love.graphics.print('Score:', VIRTUAL_WIDTH - 60, 5)
     love.graphics.printf(tostring(score), VIRTUAL_WIDTH - 50, 5, 40, 'right')
+end
+
+--[[
+    Function that renders the key when the player catches it
+]]
+function renderKey()
+        love.graphics.draw(gTextures['main'],
+        gFrames['powerups']['key'],
+        VIRTUAL_WIDTH - 115, 3, 0, 0.70, 0.70)
 end

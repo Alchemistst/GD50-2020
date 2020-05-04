@@ -123,7 +123,7 @@ function LevelMaker.createMap(level)
     end 
 
     -- randomly choose  wether this level contains locked brick
-    local isSurprise =  true -- TODO: CHANGE TO math.random(2) == 1 and true or false
+    local isSurprise = math.random(2) == 1 and true or false
     
     
     if isSurprise then

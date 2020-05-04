@@ -36,7 +36,7 @@ function VictoryState:update(dt)
         gStateMachine:change('serve', {
             level = self.level + 1,
             bricks = map.bricks,
-            lockedBrick = self.lockedBrick,
+            lockedBrick = map.lockedBrick,
             paddle = self.paddle,
             health = self.health,
             score = self.score,

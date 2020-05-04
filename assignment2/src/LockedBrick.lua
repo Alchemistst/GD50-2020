@@ -1,3 +1,4 @@
+require 'src/states/PlayState'
 LockedBrick = Class{__includes = Brick}
 
 function LockedBrick:init(brick)
@@ -15,19 +16,30 @@ function LockedBrick:init(brick)
     -- determines wether the block will behave has a normal brick and give the player all the juicy points
     self.unlocked = false
 
+    -- constant value to check if the current brick is a LockedBrick
+    self.ISLOCKEDBRICK = true
     
 
     self.tier = 0
     self.color = 0
 end
 
-function LockedBrick:hit(key)
+function LockedBrick:hit(key, loot)
     if self.unlocked then
         self.brick:hit()
+        self.tier = self.brick.tier
+        self.color = self.brick.color
+        self.inPlay = self.brick.inPlay
     else
         if key then
             self.unlocked = true
+            self.tier = self.brick.tier
+            self.color = self.brick.color
+            loot()
+            gSounds['unlockedBrick']:play()
+            return
         end
+        gSounds['lockedBrick']:play()
     end
 end
 

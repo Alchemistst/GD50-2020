@@ -21,7 +21,6 @@ PlayState = Class{__includes = BaseState}
     states as we go from playing to serving.
 ]]
 function PlayState:enter(params)
-    print (params.lockedBrick)
     self.paddle = params.paddle
     self.bricks = params.bricks
     self.lockedBrick = params.lockedBrick
@@ -40,8 +39,9 @@ function PlayState:enter(params)
     --initialize table of powerups
     self.activePowerups = {}
 
-    self.keyWasDropped = params.keyWasDropped and true or false
-    self.keyAcquired = params.keyAcquired and true or false
+    self.keyWasDropped = params.keyWasDropped or false
+    self.keyAcquired = params.keyAcquired or false
+    
 end
 
 function PlayState:update(dt)
@@ -85,27 +85,34 @@ function PlayState:update(dt)
             gSounds['paddle-hit']:play()
         end
     end
+   
     
 
     -- detect collision across all bricks with the ball
     for k, brick in pairs(self.bricks) do
-        for k, ball in pairs(self.balls) do
+        for j, ball in pairs(self.balls) do
             -- only check collision if we're in play
             if brick.inPlay and ball:collides(brick) then
 
                 -- add to score
                 self.score = self.score + (brick.tier * 200 + brick.color * 25)
-
-                -- trigger the brick's hit function, which removes it from play
-                brick:hit(self.keyAcquired)
                 
-                -- TODO: spawn powerup
-                if math.random(10) == 1 then
+                local loot = function () self:unlonckedLoot() end
+                
+                -- trigger the brick's hit function, which removes it from play
+                brick:hit(self.keyAcquired, loot)
+                if not brick.inPlay then
+                   table.remove(self.bricks, k ) 
+                end
+                
+                -- spawn powerup
+                if math.random(10) == 1 and (not brick.ISLOCKEDBRICK or brick.isUnlocked) then
                     self:spawnPowerup(brick.x +16, brick.y+8)
                 end
 
-                if self.lockedBrick and not self.keyWasDropped then
-                    if math.random(#self.bricks) <= 2 then
+                if self.lockedBrick and not self.keyWasDropped and (not brick.ISLOCKEDBRICK or brick.isUnlocked) then
+
+                    if math.random(#self.bricks) <= 2 then --if math.random(#self.bricks) <= 2 then
                         self:spawnPowerup(brick.x +16, brick.y+8, true)
                         self.keyWasDropped = true
                     end
@@ -194,6 +201,13 @@ function PlayState:update(dt)
         end
     end
 
+     -- filtering bricks which are not inPlay
+     for k, brick in pairs(self.bricks) do
+        if not brick.inPlay then
+            table.remove( self.bricks, k)
+        end
+    end
+
 
 
     -- check balls going bellow bounds
@@ -226,7 +240,8 @@ function PlayState:update(dt)
                             highScores = self.highScores,
                             level = self.level,
                             recoverPoints = self.recoverPoints,
-                            keyWasDropped = self.keyWasDropped
+                            keyWasDropped = self.keyWasDropped,
+                            keyAcquired = self.keyAcquired
                         })
                     end
                 end
@@ -240,7 +255,9 @@ function PlayState:update(dt)
         brick:update(dt)
     end
 
-    -- TODO: update powerups
+    
+
+    -- update powerups
     for k, powerup in pairs(self.activePowerups) do
         powerup:update(dt)
 
@@ -251,10 +268,9 @@ function PlayState:update(dt)
         and powerup.y < self.paddle.y + self.paddle.height
         then
 
-            print("Powerup acquired") --Debug
             if powerup.type == 'growth' then
                 self.paddle:setSize(math.min(self.paddle.size + 1, 4))
-
+                gSounds['growth']:play()
             elseif powerup.type == 'doubleBall' then
                 --Create new ball
                 local newBall = Ball()
@@ -266,11 +282,13 @@ function PlayState:update(dt)
                 newBall.dx = math.random(-200, 200)
                 newBall.dy = math.random(-50, -60)
                 table.insert(self.balls, newBall)
+                gSounds['doubleBall']:play()
             elseif powerup.type == 'heart' then
                 self.health = math.min(3, self.health + 1)
                 gSounds['recover']:play()
             elseif powerup.type == 'key' then
                 self.keyAcquired = true
+                gSounds['key']:play()
             end
 
             table.remove(self.activePowerups, k)
@@ -293,7 +311,7 @@ function PlayState:render()
         brick:renderParticles()
     end
 
-    --TODO: render powerups
+    --render powerups
     for k, powerup in pairs(self.activePowerups) do
         powerup:render()
     end
@@ -306,6 +324,11 @@ function PlayState:render()
     renderScore(self.score)
     renderHealth(self.health)
 
+
+    if self.keyAcquired then
+       renderKey()
+    end
+
     -- pause text, if paused
     if self.paused then
         love.graphics.setFont(gFonts['large'])
@@ -314,21 +337,30 @@ function PlayState:render()
 end
 
 function PlayState:checkVictory()
-    for k, brick in pairs(self.bricks) do
-        if brick.inPlay then
-            return false
-        end 
+    --[[
+            for k, brick in pairs(self.bricks) do
+                    if brick.inPlay and (not brick.ISLOCKEDBRICK or brick.isUnlocked) then
+                        return false
+                    end 
+                end
+    ]]
+    
+    if #self.bricks == 0 or (self.lockedBrick and #self.bricks == 1 and not self.keyAcquired) then
+        return true
     end
 
-    return true
+    return false
 end
 
 
 
 function PlayState:spawnPowerup(x, y, key)
     local p_type = key and "key" or POWERUP_LIST[math.random(3)]
-    --TODO: CHANGE BACK TO P_TYPE
     local p = Powerup(x, y, p_type) --So the powerup spawns in the middle of the block
     table.insert(self.activePowerups, p)
  
+end
+
+function PlayState:unlonckedLoot()
+    self.score = self.score + 30000
 end

@@ -26,6 +26,8 @@ function ServeState:enter(params)
     self.highScores = params.highScores
     self.level = params.level
     self.recoverPoints = params.recoverPoints
+    self.keyWasDropped = params.keyWasDropped
+    self.keyAcquired = params.keyAcquired 
 
     -- init new ball (random color for fun)
     self.ball = Ball()
@@ -49,7 +51,9 @@ function ServeState:update(dt)
             highScores = self.highScores,
             ball = self.ball,
             level = self.level,
-            recoverPoints = self.recoverPoints
+            recoverPoints = self.recoverPoints,
+            keyWasDropped = self.keyWasDropped,
+            keyAcquired = self.keyAcquired 
         })
     end
 
@@ -68,6 +72,10 @@ function ServeState:render()
 
     renderScore(self.score)
     renderHealth(self.health)
+
+    if self.keyAcquired then
+        renderKey()
+    end
 
     love.graphics.setFont(gFonts['large'])
     love.graphics.printf('Level ' .. tostring(self.level), 0, VIRTUAL_HEIGHT / 3,
