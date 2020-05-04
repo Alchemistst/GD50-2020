@@ -5,7 +5,8 @@ In this assigment we were told to add some extra features to a copy of an old cl
   * Double ball -> adds an extra ball.
   * Heart -> to recover lifes.
   * Key -> if there are locked bricks on the level, this powerup allows you to open them, getting extra points. You will only get one chance to get this powerup per level with a locked brick, so don't lose it!
-* Add the spawn of random locked bricks, only possible to open having a Key powerup. 
+* Add the spawn of random locked bricks, only possible to open having a Key powerup.
+* Loosing a heart resize the paddle back to normal in case of its size being larger by the effect of a Growth powerup. 
   
 ## Requirements
 You need **Lua** and **Löve2D 0.10.2**.
