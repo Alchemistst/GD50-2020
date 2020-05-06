@@ -337,14 +337,6 @@ function PlayState:render()
 end
 
 function PlayState:checkVictory()
-    --[[
-            for k, brick in pairs(self.bricks) do
-                    if brick.inPlay and (not brick.ISLOCKEDBRICK or brick.isUnlocked) then
-                        return false
-                    end 
-                end
-    ]]
-    
     if #self.bricks == 0 or (self.lockedBrick and #self.bricks == 1 and not self.keyAcquired) then
         return true
     end
