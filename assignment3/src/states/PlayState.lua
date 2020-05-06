@@ -196,6 +196,8 @@ function PlayState:calculateMatches()
         -- add score for each match
         for k, match in pairs(matches) do
             self.score = self.score + #match * 50
+            -- Add more time for each match
+            self.timer = self.timer + #match
         end
 
         -- remove any tiles that matched from the board, making empty spaces
@@ -207,6 +209,8 @@ function PlayState:calculateMatches()
         -- tween new tiles that spawn from the ceiling over 0.25s to fill in
         -- the new upper gaps that exist
         Timer.tween(0.25, tilesToFall):finish(function()
+        
+        
             
             -- recursively call function in case new matches have been created
             -- as a result of falling blocks once new blocks have finished falling
