@@ -13,7 +13,7 @@
 
 Tile = Class{}
 
-function Tile:init(x, y, color, variety)
+function Tile:init(x, y, color, variety, isShiny)
     
     -- board positions
     self.gridX = x
@@ -26,6 +26,13 @@ function Tile:init(x, y, color, variety)
     -- tile appearance/points
     self.color = color
     self.variety = variety
+
+    -- flag for checking if the current tile is a Shiny tile
+    self.isShiny = isShiny or false
+
+    if self.isShiny then
+        self.animation = Animation(gTextures['gemShine'], gFrames['shineAnimation'], self.x, self.y, 3)
+    end
 end
 
 function Tile:render(x, y)
@@ -39,4 +46,10 @@ function Tile:render(x, y)
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(gTextures['main'], gFrames['tiles'][self.color][self.variety],
         self.x + x, self.y + y)
+
+    --draw shine animation
+    if self.isShiny then
+        love.graphics.setColor(255, 255, 255, 255)
+        self.animation:render(self.x + x, self.y + y)
+    end
 end

@@ -83,3 +83,13 @@ function print_r ( t )
     end
     print()
 end
+
+function GenerateQuads (atlas, width, height)
+    quads = {}
+    for i = 0, atlas:getHeight() - height, height do
+        for j = 0, atlas:getWidth() - width, width do
+            table.insert(quads, love.graphics.newQuad(j, i, width, height, atlas:getDimensions())) 
+        end
+    end
+    return quads
+end

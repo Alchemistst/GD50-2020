@@ -28,6 +28,7 @@ Timer = require 'lib/knife.timer'
 -- utility
 require 'src/StateMachine'
 require 'src/Util'
+require 'src/Animation'
 
 -- game pieces
 require 'src/Board'
@@ -52,14 +53,16 @@ gSounds = {
 
 gTextures = {
     ['main'] = love.graphics.newImage('graphics/match3.png'),
-    ['background'] = love.graphics.newImage('graphics/background.png')
+    ['background'] = love.graphics.newImage('graphics/background.png'),
+    ['gemShine'] = love.graphics.newImage('graphics/gemShine.png')
 }
 
 gFrames = {
     
     -- divided into sets for each tile type in this game, instead of one large
     -- table of Quads
-    ['tiles'] = GenerateTileQuads(gTextures['main'])
+    ['tiles'] = GenerateTileQuads(gTextures['main']),
+    ['shineAnimation'] = GenerateQuads(gTextures['gemShine'], 32, 32)
 }
 
 -- this time, we're keeping our fonts in a global table for readability

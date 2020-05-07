@@ -26,6 +26,7 @@ end
 
 function Board:initializeTiles()
     self.tiles = {}
+    self.tilesWithAnimation = {}
 
     for tileY = 1, 8 do
         
@@ -33,9 +34,9 @@ function Board:initializeTiles()
         table.insert(self.tiles, {})
 
         for tileX = 1, 8 do
-            
+            local isShiny = math.random(1,20) == 1
             -- create a new tile at X,Y with a random color and variety
-            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(1, math.min(self.level, 6))))
+            table.insert(self.tiles[tileY], Tile(tileX, tileY, math.random(18), math.random(1, math.min(self.level, 6)), isShiny))
         end
     end
 
@@ -157,6 +158,20 @@ function Board:calculateMatches()
         end
     end
 
+    for i, match in pairs(matches) do
+        for j, tile in pairs(match) do
+            if tile.isShiny then
+                print("That was shiny!")
+                for k = 1, 8 do
+                    table.insert(match, self.tiles[tile.gridY][k])
+                    -- table.insert(match, self.tiles[k][tile.gridX])
+                    --print(tile.gridY)
+                    --print(tile.gridX)
+                end
+            end
+        end
+    end
+
     -- store matches for later reference
     self.matches = matches
 
@@ -172,6 +187,14 @@ function Board:removeMatches()
     for k, match in pairs(self.matches) do
         for k, tile in pairs(match) do
             self.tiles[tile.gridY][tile.gridX] = nil
+            
+            -- If is shiny, remove the whole row and column
+            --[[if tile.isShiny then
+                for i=1, 8 do
+                    self.tiles[tile.gridY][i] = nil
+                    self.tiles[i][tile.gridX] = nil
+                end
+            end]]
         end
     end
 
@@ -243,7 +266,8 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(18), math.random(1, math.min(self.level,6)))
+                local isShiny = math.random(1,20) == 1 
+                local tile = Tile(x, y, math.random(18), math.random(1, math.min(self.level,6)), isShiny)
                 tile.y = -32
                 self.tiles[y][x] = tile
 

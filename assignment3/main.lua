@@ -45,7 +45,6 @@ VIRTUAL_HEIGHT = 288
 BACKGROUND_SCROLL_SPEED = 80
 
 function love.load()
-    
     -- window bar title
     love.window.setTitle('Match 3')
 
@@ -99,7 +98,6 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.update(dt)
-    
     -- scroll background, used across all states
     backgroundX = backgroundX - BACKGROUND_SCROLL_SPEED * dt
     
@@ -115,9 +113,10 @@ end
 
 function love.draw()
     push:start()
-
     -- scrolling background drawn behind every state
     love.graphics.draw(gTextures['background'], backgroundX, 0)
+    --love.graphics.draw(gTextures['gemShine'], gFrames['shineAnimation'][12], 0, 0)
+    
     
     gStateMachine:render()
     push:finish()
