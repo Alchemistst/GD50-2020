@@ -158,20 +158,36 @@ function Board:calculateMatches()
         end
     end
 
+    -- Table to stage the destroyed lines to be counted as matches
+    local linesToBeDestroyed = {}
+
     for i, match in pairs(matches) do
         for j, tile in pairs(match) do
             if tile.isShiny then
-                print("That was shiny!")
-                for k = 1, 8 do
-                    table.insert(match, self.tiles[tile.gridY][k])
-                    -- table.insert(match, self.tiles[k][tile.gridX])
-                    --print(tile.gridY)
-                    --print(tile.gridX)
+                -- Check for horizontal match; if so, destroy whole row
+                if match[1].gridY == match[#match].gridY then
+                -- Take the match so is not counted twice and add stage it to be added to matches on linesToBeDestroyed
+                    table.insert(linesToBeDestroyed, trim(self.tiles[match[1].gridY], match[#match].gridX, match[1].gridX))
+                end
+                -- Check for vertical match; if so, destroy whole column
+                if match[1].gridX == match[#match].gridX then
+                    -- Extract the column first
+                    local tempColumn = {}
+                    for i = 1, #self.tiles do
+                        tempColumn[#tempColumn + 1] = self.tiles[i][match[1].gridX]
+                    end
+                    -- Take the match so is not counted twice and add stage it to be added to matches on linesToBeDestroyed
+                    table.insert(linesToBeDestroyed, trim(tempColumn, match[#match].gridY, match[1].gridY))
                 end
             end
         end
     end
 
+    -- Iterate over the table adding to matches also the tiles destroyed by the shiny tile
+    for i = 1, #linesToBeDestroyed do
+        table.insert(matches, linesToBeDestroyed[i])
+    end
+    
     -- store matches for later reference
     self.matches = matches
 
@@ -288,4 +304,25 @@ function Board:render()
             self.tiles[y][x]:render(self.x, self.y)
         end
     end
+end
+
+-- Splice table
+function splice(t, start, finish, step)
+    local slice = {}
+    
+    for i = start or 1, finish or #t, step or 1 do
+        slice[#slice + 1] = t[i]    
+    end
+    
+    return slice
+end
+-- Trim your tables
+function trim (t, start, finish)
+    trimmed = {}
+    for i = 1, #t do
+        if i < start or i > finish then
+            trimmed[#trimmed + 1] = t[i]
+        end
+    end
+    return trimmed
 end
