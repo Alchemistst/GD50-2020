@@ -127,7 +127,7 @@ function PlayState:update(dt)
             -- if same tile as currently highlighted, deselect
             local x = self.boardHighlightX + 1
             local y = self.boardHighlightY + 1
-            
+            print("("..x..","..y..")")
             -- if nothing is highlighted, highlight current tile
             if not self.highlightedTile then
                 self.highlightedTile = self.board.tiles[y][x]
@@ -139,6 +139,10 @@ function PlayState:update(dt)
             -- if the difference between X and Y combined of this highlighted tile
             -- vs the previous is not equal to 1, also remove highlight
             elseif math.abs(self.highlightedTile.gridX - x) + math.abs(self.highlightedTile.gridY - y) > 1 then
+                gSounds['error']:play()
+                self.highlightedTile = nil
+            -- check if the movement results in a match
+            elseif not self.board:closeMatches(self.board.tiles, self.highlightedTile, x, y) then
                 gSounds['error']:play()
                 self.highlightedTile = nil
             else
@@ -169,6 +173,10 @@ function PlayState:update(dt)
                 -- once the swap is finished, we can tween falling blocks as needed
                 :finish(function()
                     self:calculateMatches()
+                    if not self.board:findMatches(self.board.tiles) then
+                        print("Found match!")
+                        self.board:initializeTiles()
+                    end
                 end)
             end
         end
