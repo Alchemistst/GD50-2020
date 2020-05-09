@@ -20,8 +20,12 @@ function Board:init(x, y, level)
 
     --Get the level so we can generate tiles accordingly
     self.level = level
-
+    
     self:initializeTiles()
+    
+    -- board's width and height
+    self.width = 256
+    self.height = 256
 end
 
 function Board:initializeTiles()
@@ -47,7 +51,6 @@ function Board:initializeTiles()
         self:initializeTiles()
     end
     if not self:findMatches(self.tiles) then
-        print("No match found!")
         self:initializeTiles()
     end
 end
@@ -337,16 +340,12 @@ function Board:closeMatches(tiles, selectedTile, sx, sy)
     local colorToCheck = selectedTile.color
 
     if sx > x then
-        print("right")
         return self:checkRight(colorToCheck, x, y, tiles)
     elseif sx < x then
-        print("left")
         return self:checkLeft(colorToCheck, x, y, tiles)
     elseif sy > y then
-        print("down")
         return self:checkDown(colorToCheck, x, y, tiles)
     else
-        print("up")
         return self:checkUp(colorToCheck, x, y, tiles)
     end
     return false
@@ -380,7 +379,6 @@ function Board:checkRight(colorToCheck, x, y, tiles)
         if y+1 <= 7 then
             if colorToCheck == tiles[y+1][x+1].color then
                 if colorToCheck == tiles[y+2][x+1].color then
-                    print("1")
                     return true
                 end
             end
@@ -388,21 +386,18 @@ function Board:checkRight(colorToCheck, x, y, tiles)
         if y-1 > 1 then
             if colorToCheck == tiles[y-1][x+1].color then
                 if colorToCheck == tiles[y-2][x+1].color then
-                    print("2")
                     return true
                 end
             end
         end
         if y-1 > 0 and y+1 <= 8 then
             if colorToCheck == tiles[y-1][x+1].color and colorToCheck == tiles[y+1][x+1].color then
-                print("3")
              return true
             end
         end
         if x+2 <= 7 then
             if colorToCheck == tiles[y][x+2].color then
                 if colorToCheck == tiles[y][x+3].color then
-                    print("4")
                     return true
                 end
             end
@@ -415,7 +410,6 @@ function Board:checkLeft(colorToCheck, x, y, tiles)
         if y+1 <= 7 then
             if colorToCheck == tiles[y+1][x-1].color then
                 if colorToCheck == tiles[y+2][x-1].color then
-                    print("5")
                     return true
                 end
             end
@@ -423,21 +417,18 @@ function Board:checkLeft(colorToCheck, x, y, tiles)
         if y-1 > 1 then
             if colorToCheck == tiles[y-1][x-1].color then
                 if colorToCheck == tiles[y-2][x-1].color then
-                    print("6")
                     return true
                 end
             end
         end
         if y+1 <= 8 and  y-1 > 0 then
             if colorToCheck == tiles[y-1][x-1].color and colorToCheck == tiles[y+1][x-1].color then
-                    print("7")
                 return true
             end
         end
         if x-2 > 1 then
             if colorToCheck == tiles[y][x-2].color then
                 if colorToCheck == tiles[y][x-3].color then
-                    print("8")
                     return true
                 end
             end
@@ -450,7 +441,6 @@ function Board:checkDown(colorToCheck, x, y, tiles)
         if x+1 <= 7 then
             if colorToCheck == tiles[y+1][x+1].color then
                 if colorToCheck == tiles[y+1][x+2].color then
-                    print("9")
                     return true
                 end
             end
@@ -458,21 +448,18 @@ function Board:checkDown(colorToCheck, x, y, tiles)
         if x-1 > 1 then
             if colorToCheck == tiles[y+1][x-1].color then
                 if colorToCheck == tiles[y+1][x-2].color then
-                    print("10")
                     return true
                 end
             end
         end
         if x+1 <= 8 and  x-1 > 0 then
             if colorToCheck == tiles[y+1][x+1].color and colorToCheck == tiles[y+1][x-1].color then
-                    print("11")
                 return true
             end
         end
         if y+2 <= 7 then
             if colorToCheck == tiles[y+2][x].color then
                 if colorToCheck == tiles[y+3][x].color then
-                    print("12")
                     return true
                 end
             end
@@ -485,7 +472,6 @@ function Board:checkUp(colorToCheck, x, y, tiles)
         if x+1 <= 7 then
             if colorToCheck == tiles[y-1][x+1].color then
                 if colorToCheck == tiles[y-1][x+2].color then
-                    print("13")
                     return true
                 end
             end
@@ -493,21 +479,18 @@ function Board:checkUp(colorToCheck, x, y, tiles)
         if x-1 > 1 then
             if colorToCheck == tiles[y-1][x-1].color then
                 if colorToCheck == tiles[y-1][x-2].color then
-                    print("14")
                     return true
                 end
             end
         end
         if x+1 <= 8 and  x-1 > 0 then
             if colorToCheck == tiles[y-1][x+1].color and colorToCheck == tiles[y-1][x-1].color then
-                    print("15")
                 return true
             end
         end
         if y-2 > 1 then
             if colorToCheck == tiles[y-2][x].color then
                 if colorToCheck == tiles[y-3][x].color then
-                    print("16")
                     return true
                 end
             end
