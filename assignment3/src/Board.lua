@@ -171,6 +171,8 @@ function Board:calculateMatches()
     for i, match in pairs(matches) do
         for j, tile in pairs(match) do
             if tile.isShiny then
+                gSounds['match']:stop()
+                gSounds['shiny']:play()
                 -- Check for horizontal match; if so, destroy whole row
                 if match[1].gridY == match[#match].gridY then
                 -- Take the match so is not counted twice and add stage it to be added to matches on linesToBeDestroyed
@@ -210,14 +212,6 @@ function Board:removeMatches()
     for k, match in pairs(self.matches) do
         for k, tile in pairs(match) do
             self.tiles[tile.gridY][tile.gridX] = nil
-            
-            -- If is shiny, remove the whole row and column
-            --[[if tile.isShiny then
-                for i=1, 8 do
-                    self.tiles[tile.gridY][i] = nil
-                    self.tiles[i][tile.gridX] = nil
-                end
-            end]]
         end
     end
 

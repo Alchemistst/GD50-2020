@@ -202,7 +202,10 @@ function PlayState:handleSelection()
          :finish(function()
              self:calculateMatches()
              if not self.board:findMatches(self.board.tiles) then
-                 self.board:initializeTiles()
+                gSounds['match']:stop()
+                gSounds['boardReset']:stop()
+                gSounds['boardReset']:play()
+                self.board:initializeTiles()
              end
          end)
      end
