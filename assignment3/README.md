@@ -1,4 +1,4 @@
-# Assignment 2: Breakout
+# Assignment 3: Match 3
 In this assigment we were handed the task of implementing the following features for a Match 3 style game:
 * Add 1 second extra to the timer per tile on a match.
 * As levels progress, more variety of tiles spawn (with different shapes on them), each of them add different ammounts of points.
