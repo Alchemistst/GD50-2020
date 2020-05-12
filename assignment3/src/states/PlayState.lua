@@ -128,6 +128,9 @@ function PlayState:update(dt)
         -- move cursor based on mouse position
         -- update mouse coordinates
         self.mouseX, self.mouseY= push:toGame(love.mouse.getPosition())
+        self.mouseX = self.mouseX and self.mouseX or VIRTUAL_WIDTH
+        self.mouseY = self.mouseY and self.mouseY or VIRTUAL_HEIGHT
+
         -- check if mouse is on the board
         if self.mouseX >= self.board.x and self.mouseX <= self.board.x + self.board.width
         and self.mouseY >= self.board.y and self.mouseY <= self.board.y + self.board.height then
