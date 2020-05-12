@@ -61,6 +61,10 @@ end
     last two haven't been a match.
 ]]
 function Board:calculateMatches()
+    return self:tilesIterationAndMatches(self.tiles, self.matches)
+end
+
+function Board:tilesIterationAndMatches(tiles, selfMatches)
     local matches = {}
 
     -- how many of the same color blocks in a row we've found
@@ -68,7 +72,7 @@ function Board:calculateMatches()
 
     -- horizontal matches first
     for y = 1, 8 do
-        local colorToMatch = self.tiles[y][1].color
+        local colorToMatch = tiles[y][1].color
 
         matchNum = 1
         
@@ -76,12 +80,12 @@ function Board:calculateMatches()
         for x = 2, 8 do
             
             -- if this is the same color as the one we're trying to match...
-            if self.tiles[y][x].color == colorToMatch then
+            if tiles[y][x].color == colorToMatch then
                 matchNum = matchNum + 1
             else
                 
                 -- set this as the new color we want to watch for
-                colorToMatch = self.tiles[y][x].color
+                colorToMatch = tiles[y][x].color
 
                 -- if we have a match of 3 or more up to now, add it to our matches table
                 if matchNum >= 3 then
@@ -91,7 +95,7 @@ function Board:calculateMatches()
                     for x2 = x - 1, x - matchNum, -1 do
                         
                         -- add each tile to the match that's in that match
-                        table.insert(match, self.tiles[y][x2])
+                        table.insert(match, tiles[y][x2])
                     end
 
                     -- add this match to our total matches table
@@ -113,7 +117,7 @@ function Board:calculateMatches()
             
             -- go backwards from end of last row by matchNum
             for x = 8, 8 - matchNum + 1, -1 do
-                table.insert(match, self.tiles[y][x])
+                table.insert(match, tiles[y][x])
             end
 
             table.insert(matches, match)
@@ -122,22 +126,22 @@ function Board:calculateMatches()
 
     -- vertical matches
     for x = 1, 8 do
-        local colorToMatch = self.tiles[1][x].color
+        local colorToMatch = tiles[1][x].color
 
         matchNum = 1
 
         -- every vertical tile
         for y = 2, 8 do
-            if self.tiles[y][x].color == colorToMatch then
+            if tiles[y][x].color == colorToMatch then
                 matchNum = matchNum + 1
             else
-                colorToMatch = self.tiles[y][x].color
+                colorToMatch = tiles[y][x].color
 
                 if matchNum >= 3 then
                     local match = {}
 
                     for y2 = y - 1, y - matchNum, -1 do
-                        table.insert(match, self.tiles[y2][x])
+                        table.insert(match, tiles[y2][x])
                     end
 
                     table.insert(matches, match)
@@ -158,7 +162,7 @@ function Board:calculateMatches()
             
             -- go backwards from end of last row by matchNum
             for y = 8, 8 - matchNum + 1, -1 do
-                table.insert(match, self.tiles[y][x])
+                table.insert(match, tiles[y][x])
             end
 
             table.insert(matches, match)
@@ -171,19 +175,17 @@ function Board:calculateMatches()
     for i, match in pairs(matches) do
         for j, tile in pairs(match) do
             if tile.isShiny then
-                gSounds['match']:stop()
-                gSounds['shiny']:play()
                 -- Check for horizontal match; if so, destroy whole row
                 if match[1].gridY == match[#match].gridY then
                 -- Take the match so is not counted twice and add stage it to be added to matches on linesToBeDestroyed
-                    table.insert(linesToBeDestroyed, trim(self.tiles[match[1].gridY], match[#match].gridX, match[1].gridX))
+                    table.insert(linesToBeDestroyed, trim(tiles[match[1].gridY], match[#match].gridX, match[1].gridX))
                 end
                 -- Check for vertical match; if so, destroy whole column
                 if match[1].gridX == match[#match].gridX then
                     -- Extract the column first
                     local tempColumn = {}
-                    for i = 1, #self.tiles do
-                        tempColumn[#tempColumn + 1] = self.tiles[i][match[1].gridX]
+                    for i = 1, #tiles do
+                        tempColumn[#tempColumn + 1] = tiles[i][match[1].gridX]
                     end
                     -- Take the match so is not counted twice and add stage it to be added to matches on linesToBeDestroyed
                     table.insert(linesToBeDestroyed, trim(tempColumn, match[#match].gridY, match[1].gridY))
@@ -198,10 +200,13 @@ function Board:calculateMatches()
     end
     
     -- store matches for later reference
-    self.matches = matches
+    for i,match in pairs(matches) do
+        table.insert( selfMatches, match )
+    end
+    
 
     -- return matches table if > 0, else just return false
-    return #self.matches > 0 and self.matches or false
+    return #matches > 0 and matches or false
 end
 
 --[[
@@ -215,7 +220,7 @@ function Board:removeMatches()
         end
     end
 
-    self.matches = nil
+    self.matches = {}
 end
 
 --[[
@@ -327,23 +332,25 @@ function trim (t, start, finish)
     end
     return trimmed
 end
--- Check if movement results in a match.
-function Board:closeMatches(tiles, selectedTile, sx, sy)
-    local x = selectedTile.gridX
-    local y = selectedTile.gridY
-    local colorToCheck = selectedTile.color
-
-    if sx > x then
-        return self:checkRight(colorToCheck, x, y, tiles)
-    elseif sx < x then
-        return self:checkLeft(colorToCheck, x, y, tiles)
-    elseif sy > y then
-        return self:checkDown(colorToCheck, x, y, tiles)
-    else
-        return self:checkUp(colorToCheck, x, y, tiles)
+-- Check if a movement result in a match
+function Board:closeMatchesImproved(selectedTile, sx, sy)
+    local matchesFound = false
+    -- Do the swap
+    local temp = self.tiles[selectedTile.gridY][selectedTile.gridX] 
+    self.tiles[selectedTile.gridY][selectedTile.gridX] = self.tiles[sy][sx]
+    self.tiles[sy][sx] = temp
+    -- Look for matches
+    if self:tilesIterationAndMatches(self.tiles, {}) then
+        matchesFound = true
     end
-    return false
+    -- Undo the swap
+    temp = self.tiles[selectedTile.gridY][selectedTile.gridX] 
+    self.tiles[selectedTile.gridY][selectedTile.gridX] = self.tiles[sy][sx]
+    self.tiles[sy][sx] = temp
+    -- Return true if any matches were found in the previous state. If so, the move results in a match.
+    return matchesFound
 end
+
 -- Check for matches on the board
 function Board:findMatches(tiles)
     for i=1, #tiles do
@@ -351,6 +358,7 @@ function Board:findMatches(tiles)
             local x = tiles[i][j].gridX
             local y = tiles[i][j].gridY
             local colorToCheck = tiles[i][j].color
+
             if self:checkRight(colorToCheck, x, y, tiles) then
                 return true
             elseif self:checkLeft(colorToCheck, x, y, tiles) then
@@ -490,5 +498,29 @@ function Board:checkUp(colorToCheck, x, y, tiles)
             end
         end
     end
+    return false
+end
+function Board:checkAdjacents (colorToCheck, x, y, tiles)
+    if x+1 <= 7 then
+        if colorToCheck == tiles[y][x+1] then
+            return colorToCheck == tiles[y][x+2]
+        end
+    end
+    if x-1 > 1 then
+        if colorToCheck == tiles[y][x-1] then
+            return colorToCheck == tiles[y][x-2]
+        end
+    end
+    if y+1 <= 7 then
+        if colorToCheck == tiles[y+1][x] then
+            return colorToCheck == tiles[y+2][x]
+        end
+    end
+    if y-1 > 1 then
+        if colorToCheck == tiles[y-1][x] then
+            return colorToCheck == tiles[y-2][x]
+        end
+    end
+
     return false
 end

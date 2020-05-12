@@ -170,11 +170,16 @@ function PlayState:handleSelection()
          gSounds['error']:play()
          self.highlightedTile = nil
      -- check if the movement results in a match
-     elseif not self.board:closeMatches(self.board.tiles, self.highlightedTile, x, y) then
+     --[[elseif not self.board:closeMatches(self.board.tiles, self.highlightedTile, x, y) then
+        self.board:closeMatchesImproved(self.highlightedTile, x, y)
+
          gSounds['error']:play()
          self.highlightedTile = nil
+         ]]
+     elseif not self.board:closeMatchesImproved(self.highlightedTile, x, y) then
+            gSounds['error']:play()
+            self.highlightedTile = nil
      else
-         
          -- swap grid positions of tiles
          local tempX = self.highlightedTile.gridX
          local tempY = self.highlightedTile.gridY
@@ -235,6 +240,10 @@ function PlayState:calculateMatches()
             for j, tile in pairs(match) do 
                 -- The score uses the variety of each tile as a multiplier. 
                 self.score = self.score + 50 * tile.variety
+                if tile.isShiny then
+                    gSounds['match']:stop()
+                    gSounds['shiny']:play()
+                end
             end
 
             -- Add more time for each match
