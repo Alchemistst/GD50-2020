@@ -173,12 +173,6 @@ function PlayState:handleSelection()
          gSounds['error']:play()
          self.highlightedTile = nil
      -- check if the movement results in a match
-     --[[elseif not self.board:closeMatches(self.board.tiles, self.highlightedTile, x, y) then
-        self.board:closeMatchesImproved(self.highlightedTile, x, y)
-
-         gSounds['error']:play()
-         self.highlightedTile = nil
-         ]]
      elseif not self.board:closeMatchesImproved(self.highlightedTile, x, y) then
             gSounds['error']:play()
             self.highlightedTile = nil
