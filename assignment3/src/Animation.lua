@@ -1,6 +1,7 @@
 --[[
     Helper class that creates sprite based animations.
         Params:
+            spritesheet => texture for the quads
             quads => quads to use for the animation
             x & y => coords to place animation
             duration => duration of the animation
