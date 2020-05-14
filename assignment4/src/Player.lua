@@ -13,6 +13,8 @@ Player = Class{__includes = Entity}
 function Player:init(def)
     Entity.init(self, def)
     self.score = 0
+    self.keyAcquired = false
+    self.flagAcquired = false
 end
 
 function Player:update(dt)

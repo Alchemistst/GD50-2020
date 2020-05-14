@@ -22,6 +22,11 @@ function LevelMaker.generate(width, height)
     local tileset = math.random(20)
     local topperset = math.random(20)
 
+    -- *Flag to check if we had already spawn a key
+    local keyWasSpawn = false
+    -- *Flag to check if we had already spawn a locked block
+    local lockedBlockWasSpawn = false
+
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
@@ -38,6 +43,7 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
+        -- *Changed so on the first column, there's never a chasm
         if x ~= 1 and math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
@@ -92,69 +98,134 @@ function LevelMaker.generate(width, height)
                     }
                 )
             end
-
+-- !blocks
+            -- *Flag to check if the next block will contain the key.
+            local spawnKey = math.random(width - (x - 1)) == 1 and not keyWasSpawn
+            -- *Flag to check if the next block will be a locked block.
+            local spawnLockedBlock = math.random(width - (x - 1)) == 1 and not lockedBlockWasSpawn
+            
             -- chance to spawn a block
-            if math.random(10) == 1 then
-                table.insert(objects,
+            if math.random(10) == 1 or ((spawnKey or spawnLockedBlock) and not (spawnKey and spawnLockedBlock)) then
+                -- *If so, change keyWasSpawn to true so the key doesn't generate again    
+                if spawnKey and not spawnLockedBlock then
+                    keyWasSpawn = true
+                end
+                -- *If so, change lockedBlockWasSpawn to true so the locked block doesn't generate again    
+                if spawnLockedBlock and not spawnKey then
+                    lockedBlockWasSpawn = true
+                end
+                if spawnLockedBlock then
+                    table.insert(objects,
+                        GameObject {
+                            texture = 'keys-locks',
+                            x = (x - 1) * TILE_SIZE,
+                            y = (blockHeight - 1) * TILE_SIZE,
+                            width = 16,
+                            height = 16,
 
-                    -- jump block
-                    GameObject {
-                        texture = 'jump-blocks',
-                        x = (x - 1) * TILE_SIZE,
-                        y = (blockHeight - 1) * TILE_SIZE,
-                        width = 16,
-                        height = 16,
+                            -- make it a random variant
+                            frame = LOCKS[math.random(#LOCKS)],
+                            collidable = true,
+                            hit = false,
+                            solid = true,
+                            onCollide = function (obj, player, k)
+                                if player.keyAcquired then
+                                    player.flagAcquired = true
+                                    table.remove(player.level.objects, k)
+                                end
+                            end
+                        }
+                )
+                else
+                    table.insert(objects,
+                        -- jump block
+                        GameObject {
+                            texture = 'jump-blocks',
+                            x = (x - 1) * TILE_SIZE,
+                            y = (blockHeight - 1) * TILE_SIZE,
+                            width = 16,
+                            height = 16,
 
-                        -- make it a random variant
-                        frame = math.random(#JUMP_BLOCKS),
-                        collidable = true,
-                        hit = false,
-                        solid = true,
+                            -- make it a random variant
+                            frame = math.random(#JUMP_BLOCKS),
+                            collidable = true,
+                            hit = false,
+                            solid = true,
 
-                        -- collision function takes itself
-                        onCollide = function(obj)
+                            -- collision function takes itself
+                            onCollide = function(obj)
 
-                            -- spawn a gem if we haven't already hit the block
-                            if not obj.hit then
+                                -- spawn a gem if we haven't already hit the block
+                                if not obj.hit then
 
-                                -- chance to spawn gem, not guaranteed
-                                if math.random(5) == 1 then
+                                    -- chance to spawn gem, not guaranteed
+                                    -- *Added chance to spawn a Key, which IS guaranteed
+                                    if math.random(5) == 1 or spawnKey then
+                                        if spawnKey then                                    
+                                            -- maintain reference so we can set it to nil
+                                            local key = GameObject {
+                                                texture = 'keys-locks',
+                                                x = (x - 1) * TILE_SIZE,
+                                                y = (blockHeight - 1) * TILE_SIZE - 4,
+                                                width = 16,
+                                                height = 16,
+                                                frame = math.random(#KEYS),
+                                                collidable = true,
+                                                consumable = true,
+                                                solid = false,
 
-                                    -- maintain reference so we can set it to nil
-                                    local gem = GameObject {
-                                        texture = 'gems',
-                                        x = (x - 1) * TILE_SIZE,
-                                        y = (blockHeight - 1) * TILE_SIZE - 4,
-                                        width = 16,
-                                        height = 16,
-                                        frame = math.random(#GEMS),
-                                        collidable = true,
-                                        consumable = true,
-                                        solid = false,
+                                                onConsume = function(player, object)
+                                                    gSounds['pickup']:play()
+                                                    player.keyAcquired = true
+                                                end
+                                            }
+                                            
+                                            -- *make the key move up from the block and play a sound
+                                            Timer.tween(0.1, {
+                                                [key] = {y = (blockHeight - 2) * TILE_SIZE}
+                                            })
+                                            gSounds['powerup-reveal']:play()
 
-                                        -- gem has its own function to add to the player's score
-                                        onConsume = function(player, object)
-                                            gSounds['pickup']:play()
-                                            player.score = player.score + 100
+                                            table.insert(objects, key)
+
+                                        else
+                                            -- maintain reference so we can set it to nil
+                                            local gem = GameObject {
+                                                texture = 'gems',
+                                                x = (x - 1) * TILE_SIZE,
+                                                y = (blockHeight - 1) * TILE_SIZE - 4,
+                                                width = 16,
+                                                height = 16,
+                                                frame = math.random(#GEMS),
+                                                collidable = true,
+                                                consumable = true,
+                                                solid = false,
+
+                                                -- gem has its own function to add to the player's score
+                                                onConsume = function(player, object)
+                                                    gSounds['pickup']:play()
+                                                    player.score = player.score + 100
+                                                end
+                                            }
+                                            
+                                            -- make the gem move up from the block and play a sound
+                                            Timer.tween(0.1, {
+                                                [gem] = {y = (blockHeight - 2) * TILE_SIZE}
+                                            })
+                                            gSounds['powerup-reveal']:play()
+
+                                            table.insert(objects, gem)
                                         end
-                                    }
-                                    
-                                    -- make the gem move up from the block and play a sound
-                                    Timer.tween(0.1, {
-                                        [gem] = {y = (blockHeight - 2) * TILE_SIZE}
-                                    })
-                                    gSounds['powerup-reveal']:play()
+                                    end
 
-                                    table.insert(objects, gem)
+                                    obj.hit = true
                                 end
 
-                                obj.hit = true
+                                gSounds['empty-block']:play()
                             end
-
-                            gSounds['empty-block']:play()
-                        end
-                    }
-                )
+                        }
+                    )
+                end
             end
         end
     end
