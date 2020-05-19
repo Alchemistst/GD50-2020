@@ -41,6 +41,7 @@ function PlayState:enter(params)
     self:spawnEnemies()
 
     self.player:changeState('falling')
+
 end
 
 function PlayState:update(dt)
@@ -60,6 +61,23 @@ function PlayState:update(dt)
         self.player.x = TILE_SIZE * self.tileMap.width - self.player.width
     end
 
+    if self.player.keyAcquired and not self.player.flagAcquired then
+        self.icon = {
+            ['texture'] = gTextures['keys-locks'],
+            ['quad'] = gFrames['keys-locks'][1],
+            ['width'] = 3,
+            ['height'] = 3
+        }
+    end
+    if self.player.flagAcquired then
+        self.icon = {
+            ['texture'] = gTextures['flag'],
+            ['quad'] = gFrames['flag'][1],
+            ['width'] = 3,
+            ['height'] = 5
+        }
+    end
+
     self:updateCamera()
 end
 
@@ -71,7 +89,6 @@ function PlayState:render()
     love.graphics.draw(gTextures['backgrounds'], gFrames['backgrounds'][self.background], math.floor(-self.backgroundX + 256), 0)
     love.graphics.draw(gTextures['backgrounds'], gFrames['backgrounds'][self.background], math.floor(-self.backgroundX + 256),
         gTextures['backgrounds']:getHeight() / 3 * 2, 0, 1, -1)
-    
     -- translate the entire view of the scene to emulate a camera
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
     
@@ -86,6 +103,15 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    -- *Show item holder
+    love.graphics.draw(gTextures['item_holder'], gFrames['item_holder'][1], VIRTUAL_WIDTH - 25, 4)
+
+    -- *Show icons on interface
+    if self.icon then
+        love.graphics.draw(self.icon['texture'], self.icon['quad'], VIRTUAL_WIDTH - 25 + self.icon['width'], self.icon['height'] + 4, 0, 0.9, 0.9)
+    end
+       
 end
 
 function PlayState:updateCamera()
