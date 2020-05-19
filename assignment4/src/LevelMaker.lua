@@ -272,7 +272,11 @@ function LevelMaker.generate(width, height)
                                         function () 
                                             flag:changeState('waving') 
                                             -- !Change for animation in future
-                                            Timer.after(3, function () gStateMachine:change('play') end)
+                                            local params ={
+                                                score = player.score,
+                                                width = width + 10
+                                            }
+                                            Timer.after(3, function () gStateMachine:change('play', params) end)
                                         end
                                     )
 

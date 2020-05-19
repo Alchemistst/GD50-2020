@@ -8,9 +8,14 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
+    
+end
+
+function PlayState:enter(params)
+    if params then print(params.width) end
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(10, 10) -- !Change level length: To infinity and beyond update
+    self.level = params and LevelMaker.generate(params.width, 10) or LevelMaker.generate(30, 10) -- !Change level length: To infinity and beyond update
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
@@ -29,7 +34,8 @@ function PlayState:init()
             ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
         },
         map = self.tileMap,
-        level = self.level
+        level = self.level,
+        score = params and params.score or 0
     })
 
     self:spawnEnemies()
