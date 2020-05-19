@@ -12,6 +12,7 @@ Snail = Class{__includes = Entity}
 
 function Snail:init(def)
     Entity.init(self, def)
+    self.isHostile = true
 end
 
 function Snail:render()

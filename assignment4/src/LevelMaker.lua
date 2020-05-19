@@ -43,8 +43,8 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        -- *Changed so on the first column, there's never a chasm
-        if x ~= 1 and math.random(7) == 1 then
+        -- *Changed so on the first and last columns there's never a chasm
+        if (x ~= 1 and x ~= width) and math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -59,6 +59,7 @@ function LevelMaker.generate(width, height)
                     Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
             end
 
+            -- !CHANCE TO GENERATE PILLAR
             -- chance to generate a pillar
             if math.random(8) == 1 then
                 blockHeight = 2
@@ -114,6 +115,7 @@ function LevelMaker.generate(width, height)
                 if spawnLockedBlock and not spawnKey then
                     lockedBlockWasSpawn = true
                 end
+                -- *Spawn lockedBlock
                 if spawnLockedBlock then
                     table.insert(objects,
                         GameObject {
@@ -226,6 +228,63 @@ function LevelMaker.generate(width, height)
                         }
                     )
                 end
+            end
+            -- *Generate pole for the flag
+            if x == width then
+                print('pole!')
+                table.insert(objects,
+                GameObject{
+                    texture = 'poles',
+                    x = (x - 1) * TILE_SIZE,
+                    y = (blockHeight - 1) * TILE_SIZE,
+                    width = 8,
+                    height = 48,
+                    frame = math.random(#POLES_IDS),
+                    collidable = true,
+                    solid = false,
+                    triggerable = true,
+                    hit = false,
+                    onCollide = 
+                        function(obj, player)
+                            if player.flagAcquired then
+                                if not obj.hit then
+                                    print('Flag!')
+                                    local flag 
+                                    flag = Entity{
+                                        x = (x - 1) * TILE_SIZE + 2,
+                                        y = (blockHeight+1) * TILE_SIZE,
+                                        texture = 'flag',
+                                        width = 16,
+                                        height = 15,
+                                        stateMachine = StateMachine{
+                                            ['waving'] = function() return FlagWavingState(flag, player)  end,
+                                            ['down'] = function() return FlagDownState(flag, player) end
+                                        }
+                                    }
+                                    
+                                    flag.direction = 'right'
+                                    
+                                    flag:changeState('down')
+                                    
+                                    Timer.tween(2, {
+                                        [flag] = {y = (blockHeight - 1) * TILE_SIZE + 4}
+                                    }):finish(
+                                        function () 
+                                            flag:changeState('waving') 
+                                            -- !Change for animation in future
+                                            Timer.after(3, function () gStateMachine:change('play') end)
+                                        end
+                                    )
+
+                                   
+                                    table.insert(entities, flag)
+                                    
+                                    obj.hit = true
+                                end
+                            end
+                        end
+                }
+            )
             end
         end
     end

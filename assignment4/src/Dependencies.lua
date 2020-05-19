@@ -42,6 +42,9 @@ require 'src/states/entity/snail/SnailChasingState'
 require 'src/states/entity/snail/SnailIdleState'
 require 'src/states/entity/snail/SnailMovingState'
 
+require 'src/states/entity/flag/FlagWavingState'
+require 'src/states/entity/flag/FlagDownState'
+
 -- general
 require 'src/Animation'
 require 'src/Entity'
@@ -52,6 +55,7 @@ require 'src/Player'
 require 'src/Snail'
 require 'src/Tile'
 require 'src/TileMap'
+require 'src/Flag'
 
 
 gSounds = {
@@ -74,7 +78,9 @@ gTextures = {
     ['backgrounds'] = love.graphics.newImage('graphics/backgrounds.png'),
     ['green-alien'] = love.graphics.newImage('graphics/green_alien.png'),
     ['creatures'] = love.graphics.newImage('graphics/creatures.png'),
-    ['keys-locks'] = love.graphics.newImage('graphics/keys_and_locks.png')
+    ['keys-locks'] = love.graphics.newImage('graphics/keys_and_locks.png'),
+    ['poles'] = love.graphics.newImage('graphics/poles.png'),
+    ['flag'] = love.graphics.newImage('graphics/flag.png')
 }
 
 gFrames = {
@@ -88,7 +94,9 @@ gFrames = {
     ['backgrounds'] = GenerateQuads(gTextures['backgrounds'], 256, 128),
     ['green-alien'] = GenerateQuads(gTextures['green-alien'], 16, 20),
     ['creatures'] = GenerateQuads(gTextures['creatures'], 16, 16),
-    ['keys-locks'] = GenerateQuads(gTextures['keys-locks'], 16, 16)
+    ['keys-locks'] = GenerateQuads(gTextures['keys-locks'], 16, 16),
+    ['poles'] = GenerateQuads(gTextures['poles'], 8, 48),
+    ['flag'] = GenerateQuads(gTextures['flag'], 16, 15)
 }
 
 -- these need to be added after gFrames is initialized because they refer to gFrames from within

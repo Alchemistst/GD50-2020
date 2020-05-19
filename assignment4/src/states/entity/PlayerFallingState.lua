@@ -79,11 +79,13 @@ function PlayerFallingState:update(dt)
 
     -- check if we've collided with any entities and kill them if so
     for k, entity in pairs(self.player.level.entities) do
-        if entity:collides(self.player) then
-            gSounds['kill']:play()
-            gSounds['kill2']:play()
-            self.player.score = self.player.score + 100
-            table.remove(self.player.level.entities, k)
+        if entity.isHostile then
+            if entity:collides(self.player) then
+                gSounds['kill']:play()
+                gSounds['kill2']:play()
+                self.player.score = self.player.score + 100
+                table.remove(self.player.level.entities, k)
+            end
         end
     end
 end

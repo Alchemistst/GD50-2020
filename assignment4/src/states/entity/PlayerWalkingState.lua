@@ -51,9 +51,20 @@ function PlayerWalkingState:update(dt)
 
     -- check if we've collided with any entities and die if so
     for k, entity in pairs(self.player.level.entities) do
-        if entity:collides(self.player) then
-            gSounds['death']:play()
-            gStateMachine:change('start')
+        if entity.isHostile then
+            if entity:collides(self.player) then
+                gSounds['death']:play()
+                gStateMachine:change('start')
+            end
+        end
+    end
+
+    -- *check if we've collided with any game objects
+    for k, object in pairs(self.player.level.objects) do
+        if object:collides(self.player) then
+            if object.triggerable then
+                object.onCollide(object, self.player)
+            end
         end
     end
 
