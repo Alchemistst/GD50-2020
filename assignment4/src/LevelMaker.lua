@@ -14,6 +14,7 @@ function LevelMaker.generate(width, height)
     local tiles = {}
     local entities = {}
     local objects = {}
+    local map
 
     local tileID = TILE_ID_GROUND
     
@@ -27,6 +28,23 @@ function LevelMaker.generate(width, height)
     -- *Flag to check if we had already spawn a locked block
     local lockedBlockWasSpawn = false
 
+    local outline
+
+    local accessible = false
+
+while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
+    
+    tiles = {}
+    entities = {}
+    objects = {}
+    keyWasSpawn = false
+    lockedBlockWasSpawn = false
+
+    -- *To prevent unaccessible blocks to spwan, we create an outline of the level 
+    -- * pilar = 1, block = 2, anything else = 0
+    -- * if 1,2,2,...,2,1 is found, then there are unaccessible blocks
+    outline = {}
+    
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
@@ -43,12 +61,14 @@ function LevelMaker.generate(width, height)
         end
 
         -- chance to just be emptiness
-        -- *Changed so on the first and last columns there's never a chasm
-        if (x ~= 1 and x ~= width) and math.random(7) == 1 then
+        -- *Changed so on the first and 3 last columns there's never a chasm
+        if (x ~= 1 and x <= width - 3) and math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
             end
+            -- *Add flat to outline
+            table.insert(outline, x, 0)
         else
             tileID = TILE_ID_GROUND
 
@@ -59,9 +79,13 @@ function LevelMaker.generate(width, height)
                     Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
             end
 
+            table.insert(outline, x, 0)
+
             -- !CHANCE TO GENERATE PILLAR
             -- chance to generate a pillar
             if math.random(8) == 1 then
+                -- *Add pillar to outline
+                outline[x] = 1
                 blockHeight = 2
                 
                 -- chance to generate bush on pillar
@@ -101,19 +125,27 @@ function LevelMaker.generate(width, height)
             end
 -- !blocks
             -- *Flag to check if the next block will contain the key.
-            local spawnKey = math.random(width - (x - 1)) == 1 and not keyWasSpawn
+            local spawnKey = math.random(width - (x - 4)) == 1 and not keyWasSpawn
             -- *Flag to check if the next block will be a locked block.
-            local spawnLockedBlock = math.random(width - (x - 1)) == 1 and not lockedBlockWasSpawn
+            local spawnLockedBlock = math.random(width - (x - 4)) == 1 and not lockedBlockWasSpawn
             
             -- chance to spawn a block
-            if math.random(10) == 1 or ((spawnKey or spawnLockedBlock) and not (spawnKey and spawnLockedBlock)) then
+            if (x > 1) and (x <= width - 3) and (math.random(10) == 1 or ((spawnKey or spawnLockedBlock) and not (spawnKey and spawnLockedBlock))) then
+                -- *Add block to outline
+                if outline[x] ~= 1 then
+                    outline[x] = 2
+                elseif outline[x] == 1 then
+                    outline[x] = 3
+                end
                 -- *If so, change keyWasSpawn to true so the key doesn't generate again    
                 if spawnKey and not spawnLockedBlock then
                     keyWasSpawn = true
+                    print('key at '..x)
                 end
                 -- *If so, change lockedBlockWasSpawn to true so the locked block doesn't generate again    
                 if spawnLockedBlock and not spawnKey then
                     lockedBlockWasSpawn = true
+                    print('lock at '..x)
                 end
                 -- *Spawn lockedBlock
                 if spawnLockedBlock then
@@ -230,12 +262,12 @@ function LevelMaker.generate(width, height)
                 end
             end
             -- *Generate pole for the flag
-            if x == width then
+            if x == width - 1 then
                 print('pole!')
                 table.insert(objects,
                 GameObject{
                     texture = 'poles',
-                    x = (x - 1) * TILE_SIZE,
+                    x = (x - 1) * TILE_SIZE + 4,
                     y = (blockHeight - 1) * TILE_SIZE,
                     width = 8,
                     height = 48,
@@ -251,7 +283,7 @@ function LevelMaker.generate(width, height)
                                     print('Flag!')
                                     local flag 
                                     flag = Entity{
-                                        x = (x - 1) * TILE_SIZE + 2,
+                                        x = (x - 1) * TILE_SIZE + 6,
                                         y = (blockHeight+1) * TILE_SIZE,
                                         texture = 'flag',
                                         width = 16,
@@ -293,8 +325,39 @@ function LevelMaker.generate(width, height)
         end
     end
 
-    local map = TileMap(width, height)
+    map = TileMap(width, height)
     map.tiles = tiles
+
+    -- *Check outline for unaccessible blocks
+    print("level width: "..width)
+    print("level length: "..#outline)
+    print("level tiles: "..#tiles[1])
+    print("Before: "..table.concat(outline, ", "))
+    local match = false
+    local counter = 1
+    while counter <= #outline do
+        if outline[counter] == outline[counter+1] then
+            table.remove(outline, counter + 1)
+        else
+            counter = counter + 1
+        end
+    end
+
+    accessible = true
     
-    return GameLevel(entities, objects, map)
+    for i=1, #outline-2 do
+        local check = table.concat({outline[i], outline[i+1], outline[i+2]})
+        if check == "121" or check == "232" or check == "123" or check == "321" then
+            print("We found it at "..i)
+            accessible = false
+        end
+    end
+    print("After: "..table.concat(outline, ", "))
+
+        if not keyWasSpawn or not lockedBlockWasSpawn then
+            print('regenerating')
+        end
+end
+
+return GameLevel(entities, objects, map)
 end
