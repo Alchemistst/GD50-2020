@@ -140,12 +140,10 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
                 -- *If so, change keyWasSpawn to true so the key doesn't generate again    
                 if spawnKey and not spawnLockedBlock then
                     keyWasSpawn = true
-                    print('key at '..x)
                 end
                 -- *If so, change lockedBlockWasSpawn to true so the locked block doesn't generate again    
                 if spawnLockedBlock and not spawnKey then
                     lockedBlockWasSpawn = true
-                    print('lock at '..x)
                 end
                 -- *Spawn lockedBlock
                 if spawnLockedBlock then
@@ -264,7 +262,6 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
             end
             -- *Generate pole for the flag
             if x == width - 1 then
-                print('pole!')
                 table.insert(objects,
                 GameObject{
                     texture = 'poles',
@@ -281,7 +278,6 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
                         function(obj, player)
                             if player.flagAcquired then
                                 if not obj.hit then
-                                    print('Flag!')
                                     local flag 
                                     flag = Entity{
                                         x = (x - 1) * TILE_SIZE + 6,
@@ -335,10 +331,6 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
     map.tiles = tiles
 
     -- *Check outline for unaccessible blocks
-    print("level width: "..width)
-    print("level length: "..#outline)
-    print("level tiles: "..#tiles[1])
-    print("Before: "..table.concat(outline, ", "))
     local match = false
     local counter = 1
     while counter <= #outline do
@@ -354,15 +346,10 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
     for i=1, #outline-2 do
         local check = table.concat({outline[i], outline[i+1], outline[i+2]})
         if check == "121" or check == "232" or check == "123" or check == "321" then
-            print("We found it at "..i)
             accessible = false
         end
     end
-    print("After: "..table.concat(outline, ", "))
-
-        if not keyWasSpawn or not lockedBlockWasSpawn then
-            print('regenerating')
-        end
+   
 end
 
 return GameLevel(entities, objects, map)

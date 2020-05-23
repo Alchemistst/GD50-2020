@@ -12,7 +12,6 @@ function PlayState:init()
 end
 
 function PlayState:enter(params)
-    if params then print(params.width) end
     self.camX = 0
     self.camY = 0
     self.level = params and LevelMaker.generate(params.width, 10) or LevelMaker.generate(30, 10) -- !Change level length: To infinity and beyond update
