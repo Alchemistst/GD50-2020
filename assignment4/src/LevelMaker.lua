@@ -297,6 +297,8 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
                                     flag.direction = 'right'
                                     
                                     flag:changeState('down')
+
+                                    player:changeState('celebration')
                                     
                                     Timer.tween(2, {
                                         [flag] = {y = (blockHeight - 1) * TILE_SIZE + 4}
