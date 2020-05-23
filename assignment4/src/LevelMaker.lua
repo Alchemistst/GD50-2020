@@ -164,6 +164,7 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
                             solid = true,
                             onCollide = function (obj, player, k)
                                 if player.keyAcquired then
+                                    gSounds['unlocked']:play()
                                     player.flagAcquired = true
                                     table.remove(player.level.objects, k)
                                 end
@@ -298,8 +299,11 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
                                     
                                     flag:changeState('down')
 
+                                    -- *Get the player into the Celebration State! Hooray!
                                     player:changeState('celebration')
                                     
+                                    gSounds['goal']:play()
+
                                     Timer.tween(2, {
                                         [flag] = {y = (blockHeight - 1) * TILE_SIZE + 4}
                                     }):finish(

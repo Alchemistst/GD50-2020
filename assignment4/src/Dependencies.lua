@@ -67,7 +67,9 @@ gSounds = {
     ['pickup'] = love.audio.newSource('sounds/pickup.wav'),
     ['empty-block'] = love.audio.newSource('sounds/empty-block.wav'),
     ['kill'] = love.audio.newSource('sounds/kill.wav'),
-    ['kill2'] = love.audio.newSource('sounds/kill2.wav')
+    ['kill2'] = love.audio.newSource('sounds/kill2.wav'),
+    ['unlocked'] = love.audio.newSource('sounds/unlocked.wav'),
+    ['goal'] = love.audio.newSource('sounds/goal.wav')
 }
 
 gTextures = {
