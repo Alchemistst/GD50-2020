@@ -37,12 +37,16 @@ function PlayerWalkingState:update(dt)
         -- check to see whether there are any tiles beneath us
         if #collidedObjects == 0 and (tileBottomLeft and tileBottomRight) and (not tileBottomLeft:collidable() and not tileBottomRight:collidable()) then
             self.player.dy = 0
+            -- *Shift the player 1px down so it falls if it walks over a 1 tile chasm.
+            self.player.y = self.player.y + 1
             self.player:changeState('falling')
-        elseif love.keyboard.isDown('left') then
+        end
+        if love.keyboard.isDown('left') then
             self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
             self.player.direction = 'left'
             self.player:checkLeftCollisions(dt)
-        elseif love.keyboard.isDown('right') then
+        end
+        if love.keyboard.isDown('right') then
             self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
             self.player.direction = 'right'
             self.player:checkRightCollisions(dt)

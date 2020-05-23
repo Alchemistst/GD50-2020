@@ -62,7 +62,7 @@ while not keyWasSpawn or not lockedBlockWasSpawn or not accessible do
 
         -- chance to just be emptiness
         -- *Changed so on the first and 3 last columns there's never a chasm
-        if (x ~= 1 and x <= width - 3) and math.random(7) == 1 then
+        if (x ~= 1 and x <= width - 3) and math.random(math.random(3,7)) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
