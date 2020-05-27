@@ -9,7 +9,6 @@
 Entity = Class{}
 
 function Entity:init(def)
-
     -- in top-down games, there are four directions instead of two
     self.direction = 'down'
 
@@ -36,6 +35,16 @@ function Entity:init(def)
     self.flashTimer = 0
 
     self.dead = false
+
+    -- *function triggered when entity dies
+    self.onDie = function () end
+    -- *function to kill the entity
+    self.kill = function () 
+        if not self.dead then
+            self.dead = true 
+            self:onDie()
+        end
+    end
 end
 
 function Entity:createAnimations(animations)

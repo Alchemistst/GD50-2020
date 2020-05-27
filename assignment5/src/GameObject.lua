@@ -8,7 +8,7 @@
 
 GameObject = Class{}
 
-function GameObject:init(def, x, y)
+function GameObject:init(def, x, y, onConsume)
     -- string identifying this object type
     self.type = def.type
 
@@ -30,6 +30,11 @@ function GameObject:init(def, x, y)
 
     -- default empty collision callback
     self.onCollide = function() end
+
+    -- *whether an object is consumable and consume callback
+    self.consumable = def.consumable
+    self.onConsume = onConsume
+    
 end
 
 function GameObject:update(dt)

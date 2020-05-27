@@ -26,5 +26,18 @@ GAME_OBJECT_DEFS = {
     },
     ['pot'] = {
         -- TODO
+    },
+    ['heart_consumable'] = {
+        type = 'consumable',
+        texture = 'hearts_consumable',
+        frame = 1,
+        width = 7,
+        height = 7,
+        solid = false,
+        consumable = true,
+        defaultState = 'default',
+        states = {
+            ['default'] = {frame = 1}
+        }
     }
 }

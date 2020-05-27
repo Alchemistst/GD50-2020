@@ -41,6 +41,17 @@ function PlayerWalkState:update(dt)
     -- perform base collision detection against walls
     EntityWalkState.update(self, dt)
 
+    -- *Check for consumables in this state to avoid the object to be consumed when the sword swing, 
+    -- *looking as if the object is not really being spawned
+    for k, object in pairs(self.dungeon.currentRoom.objects) do
+        if self.entity:collides(object) then
+            if object.consumable then
+                object.onConsume(self.entity)
+                table.remove(self.dungeon.currentRoom.objects, k)
+            end
+        end
+    end
+
     -- if we bumped something when checking collision, check any object collisions
     if self.bumped then
         if self.entity.direction == 'left' then

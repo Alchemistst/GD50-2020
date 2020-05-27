@@ -72,6 +72,26 @@ function Room:generateEntities()
             ['idle'] = function() return EntityIdleState(self.entities[i]) end
         }
 
+        -- *Define behaviour for when an entity dies
+        self.entities[i].onDie = function () 
+            -- *Spawn heart
+            if math.random(3) == 1 then
+                local heart = GameObject(
+                    GAME_OBJECT_DEFS['heart_consumable'],
+                    self.entities[i].x + self.entities[i].width / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2,
+                    self.entities[i].y + self.entities[i].height / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2 ,
+                    function (player) 
+                        player:heal(2)
+                    end 
+                )
+                Timer.tween(0.5, {
+                    [heart] = { y = self.entities[i].y + self.entities[i].height - GAME_OBJECT_DEFS['heart_consumable'].width}
+                })
+                
+                table.insert(self.objects, heart)
+            end
+        end
+
         self.entities[i]:changeState('walk')
     end
 end
@@ -157,7 +177,8 @@ function Room:update(dt)
 
         -- remove entity from the table if health is <= 0
         if entity.health <= 0 then
-            entity.dead = true
+            entity:kill()
+            -- entity.dead = true
         elseif not entity.dead then
             entity:processAI({room = self}, dt)
             entity:update(dt)
@@ -177,9 +198,8 @@ function Room:update(dt)
 
     for k, object in pairs(self.objects) do
         object:update(dt)
-
         -- trigger collision callback on object
-        if self.player:collides(object) then
+        if self.player:collides(object) then            
             object:onCollide()
         end
     end

@@ -23,7 +23,10 @@ function PlayState:init()
         health = 6,
 
         -- rendering and collision offset for spaced sprites
-        offsetY = 5
+        offsetY = 5,
+
+        -- *Player's max health
+        MAX_HEALTH = ENTITY_DEFS['player'].MAX_HEALTH
     }
 
     self.dungeon = Dungeon(self.player)
