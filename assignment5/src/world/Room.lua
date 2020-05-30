@@ -124,6 +124,20 @@ function Room:generateObjects()
             gSounds['door']:play()
         end
     end
+
+    -- *Generate pots
+    for j = MAP_RENDER_OFFSET_Y + TILE_SIZE, VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16, GAME_OBJECT_DEFS['pot'].height do
+        for i = MAP_RENDER_OFFSET_X + TILE_SIZE, VIRTUAL_WIDTH - TILE_SIZE * 2 - 16, GAME_OBJECT_DEFS['pot'].width do
+            if math.random(15) == 1 then
+                local newPot = GameObject(
+                    GAME_OBJECT_DEFS['pot'],
+                    i,j)
+                     -- *Add pot to the list of objects
+                    table.insert(self.objects, newPot)
+            end
+        end
+    end
+    
 end
 
 --[[
@@ -194,6 +208,14 @@ function Room:update(dt)
                 gStateMachine:change('game-over')
             end
         end
+
+        -- *collision between entities and objects in the room
+        for k, object in pairs(self.objects) do
+            if entity:collides(object) and object.solid then
+                Room:collisionWithSolidObject(entity, object)
+                entity.bumped = true
+            end
+        end
     end
 
     for k, object in pairs(self.objects) do
@@ -201,7 +223,27 @@ function Room:update(dt)
         -- trigger collision callback on object
         if self.player:collides(object) then            
             object:onCollide()
+            print('colliding '..os.clock())
+            -- *If the object is solid, don't let the player through
+            if object.solid then
+               Room:collisionWithSolidObject(self.player, object)
+               -- *Change state to idle so the texture of the playing walking doesn't overlap the pot
+                self.player:changeState('idle')
+            end
         end
+    end
+end
+
+function Room:collisionWithSolidObject(entity, object)
+    -- *Check direction, then set player coordinates accordingly
+    if entity.direction == "up" then
+        entity.y = object.y + object.height - entity.height/2 - 1.25
+    elseif entity.direction == "down" then
+        entity.y = object.y - entity.height + 1.25
+    elseif entity.direction == "right" then
+        entity.x = object.x - entity.width + 1.25
+    elseif entity.direction == "left" then
+        entity.x = object.x + object.width - 1.25
     end
 end
 

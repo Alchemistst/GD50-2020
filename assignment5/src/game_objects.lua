@@ -25,7 +25,16 @@ GAME_OBJECT_DEFS = {
         }
     },
     ['pot'] = {
-        -- TODO
+        type = 'throwable',
+        texture = 'tiles',
+        frame = 14,
+        width = 16,
+        height = 16,
+        solid = true,
+        defaultState = 'default',
+        states = {
+            ['default'] = {frame = 14}
+        }
     },
     ['heart_consumable'] = {
         type = 'consumable',

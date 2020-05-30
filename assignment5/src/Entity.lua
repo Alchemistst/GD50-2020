@@ -65,8 +65,20 @@ end
     AABB with some slight shrinkage of the box on the top side for perspective.
 ]]
 function Entity:collides(target)
+    --[[
     return not (self.x + self.width < target.x or self.x > target.x + target.width or
                 self.y + self.height < target.y or self.y > target.y + target.height)
+
+    ]]
+    if target.solid then
+        local selfY, selfHeight = self.y + self.height / 2, self.height - self.height / 2
+        
+        return not (self.x + self.width < target.x + 2 or self.x > target.x - 2 + target.width or
+        selfY + selfHeight < target.y + 1.5 or selfY > target.y - 1.5 + target.height)
+    else
+        return not (self.x + self.width < target.x or self.x > target.x + target.width or
+                self.y + self.height < target.y or self.y > target.y + target.height)
+    end
 end
 
 function Entity:damage(dmg)
