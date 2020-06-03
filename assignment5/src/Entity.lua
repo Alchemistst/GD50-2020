@@ -76,8 +76,8 @@ function Entity:collides(target)
         return not (self.x + self.width < target.x + 2 or self.x > target.x - 2 + target.width or
         selfY + selfHeight < target.y + 1.5 or selfY > target.y - 1.5 + target.height)
     else
-        return not (self.x + self.width < target.x or self.x > target.x + target.width or
-                self.y + self.height < target.y or self.y > target.y + target.height)
+        return not (self.x + self.width < target.x + 5 or self.x > target.x + target.width - 5 or
+                self.y + self.height < target.y + 5 or self.y > target.y + target.height - 5)
     end
 end
 

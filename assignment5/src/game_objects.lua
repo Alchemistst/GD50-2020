@@ -25,7 +25,7 @@ GAME_OBJECT_DEFS = {
         }
     },
     ['pot'] = {
-        type = 'throwable',
+        type = 'throwable-breakable',
         texture = 'tiles',
         frame = 14,
         width = 16,

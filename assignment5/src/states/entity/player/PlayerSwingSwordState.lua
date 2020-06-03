@@ -25,21 +25,21 @@ function PlayerSwingSwordState:init(player, dungeon)
         hitboxWidth = 8
         hitboxHeight = 16
         hitboxX = self.player.x - hitboxWidth
-        hitboxY = self.player.y + 2
+        hitboxY = self.player.y + self.player.height/2 - hitboxHeight/2
     elseif direction == 'right' then
         hitboxWidth = 8
         hitboxHeight = 16
         hitboxX = self.player.x + self.player.width
-        hitboxY = self.player.y + 2
+        hitboxY = self.player.y + self.player.height/2 - hitboxHeight/2
     elseif direction == 'up' then
         hitboxWidth = 16
         hitboxHeight = 8
-        hitboxX = self.player.x
+        hitboxX = self.player.x + self.player.width/2 - hitboxWidth/2
         hitboxY = self.player.y - hitboxHeight
     else
         hitboxWidth = 16
         hitboxHeight = 8
-        hitboxX = self.player.x
+        hitboxX = self.player.x + self.player.width/2 - hitboxWidth/2
         hitboxY = self.player.y + self.player.height
     end
 
@@ -63,6 +63,16 @@ function PlayerSwingSwordState:update(dt)
             gSounds['hit-enemy']:play()
         end
     end
+    -- *Check if hitbox collides with any breakable object
+    for k, object in pairs(self.dungeon.currentRoom.objects) do
+        if string.find(object.type, "breakable") 
+        and not (self.swordHitbox.x + self.swordHitbox.width < object.x 
+        or self.swordHitbox.y + self.swordHitbox.height < object.y 
+        or self.swordHitbox.x > object.x + object.width 
+        or self.swordHitbox.y > object.y + object.height)then
+            table.remove( self.dungeon.currentRoom.objects, k )
+        end
+    end
 
     if self.player.currentAnimation.timesPlayed > 0 then
         self.player.currentAnimation.timesPlayed = 0
@@ -80,9 +90,9 @@ function PlayerSwingSwordState:render()
         math.floor(self.player.x - self.player.offsetX), math.floor(self.player.y - self.player.offsetY))
 
     -- debug for player and hurtbox collision rects
-    -- love.graphics.setColor(255, 0, 255, 255)
-    -- love.graphics.rectangle('line', self.player.x, self.player.y, self.player.width, self.player.height)
-    -- love.graphics.rectangle('line', self.swordHurtbox.x, self.swordHurtbox.y,
-    --     self.swordHurtbox.width, self.swordHurtbox.height)
-    -- love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(255, 0, 255, 255)
+    love.graphics.rectangle('line', self.player.x, self.player.y, self.player.width, self.player.height)
+    love.graphics.rectangle('line', self.swordHitbox.x, self.swordHitbox.y,
+        self.swordHitbox.width, self.swordHitbox.height)
+    love.graphics.setColor(255, 255, 255, 255)
 end

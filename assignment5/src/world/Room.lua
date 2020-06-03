@@ -79,11 +79,11 @@ function Room:generateEntities()
                 local heart = GameObject(
                     GAME_OBJECT_DEFS['heart_consumable'],
                     self.entities[i].x + self.entities[i].width / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2,
-                    self.entities[i].y + self.entities[i].height / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2 ,
-                    function (player) 
-                        player:heal(2)
-                    end 
+                    self.entities[i].y + self.entities[i].height / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2 
                 )
+                heart.onConsume = function (player) 
+                    player:heal(2)
+                end 
                 Timer.tween(0.5, {
                     [heart] = { y = self.entities[i].y + self.entities[i].height - GAME_OBJECT_DEFS['heart_consumable'].width}
                 })
@@ -223,7 +223,6 @@ function Room:update(dt)
         -- trigger collision callback on object
         if self.player:collides(object) then            
             object:onCollide()
-            print('colliding '..os.clock())
             -- *If the object is solid, don't let the player through
             if object.solid then
                Room:collisionWithSolidObject(self.player, object)

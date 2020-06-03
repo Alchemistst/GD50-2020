@@ -8,7 +8,7 @@
 
 GameObject = Class{}
 
-function GameObject:init(def, x, y, onConsume)
+function GameObject:init(def, x, y)
     -- string identifying this object type
     self.type = def.type
 
@@ -33,7 +33,10 @@ function GameObject:init(def, x, y, onConsume)
 
     -- *whether an object is consumable and consume callback
     self.consumable = def.consumable
-    self.onConsume = onConsume
+    self.onConsume = function() end
+    
+    -- *callback for when an object is hit by the player
+    self.onDamaged = function() end
     
 end
 
@@ -42,8 +45,12 @@ function GameObject:update(dt)
 end
 
 function GameObject:render(adjacentOffsetX, adjacentOffsetY)
-    love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.states[self.state].frame or self.frame],
-        self.x + adjacentOffsetX, self.y + adjacentOffsetY)
+    if self.animation then
+
+    else
+        love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.states[self.state].frame or self.frame],
+            self.x + adjacentOffsetX, self.y + adjacentOffsetY)
+    end
     -- love.graphics.setColor(255, 0, 255, 255)
     -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
     -- love.graphics.setColor(255, 255, 255, 255)
