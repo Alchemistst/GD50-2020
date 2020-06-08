@@ -1,23 +1,18 @@
---[[
-    GD50
-    Legend of Zelda
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
-]]
-
-PlayerIdleState = Class{__includes = EntityIdleState}
-function PlayerIdleState:init(player, dungeon)
+PlayerIdlePotState = Class{__includes = EntityIdleState}
+function PlayerIdlePotState:init(player, dungeon)
     self.entity = player
     self.dungeon = dungeon
 
-    self.entity:changeAnimation('idle-' .. self.entity.direction)
+    self.entity:changeAnimation('idle-pot-' .. self.entity.direction)
 end
 
-function PlayerIdleState:enter(params)
+function PlayerIdlePotState:enter(params)
     -- render offset for spaced character sprite
     self.entity.offsetY = 5
     self.entity.offsetX = 0
+
+    self.objectHeld = params.object
+    self.objectHeld.solid = false
 
     -- *Create a Holdbox to check for holdable objects in front of the player
     local direction = self.entity.direction
@@ -49,18 +44,11 @@ function PlayerIdleState:enter(params)
     self.holdbox = Hitbox(holdboxX, holdboxY, holdboxWidth, holdboxHeight)
 end
 
-function PlayerIdleState:update(dt)
-    EntityIdleState.update(self, dt)
-end
+function PlayerIdlePotState:update(dt)
 
-function PlayerIdleState:update(dt)
     if love.keyboard.isDown('left') or love.keyboard.isDown('right') or
        love.keyboard.isDown('up') or love.keyboard.isDown('down') then
-        self.entity:changeState('walk')
-    end
-
-    if love.keyboard.wasPressed('space') then
-        self.entity:changeState('swing-sword')
+        self.entity:changeState('walking-pot', {['object']= self.objectHeld})
     end
 
     if love.keyboard.wasPressed('q') then
@@ -74,8 +62,7 @@ function PlayerIdleState:update(dt)
             or self.holdbox.y > object.y + object.height)then
                 -- *Pick object by changing the player's state
                 print('carry you')
-                self.entity.objectHeld = object
-                self.entity:changeState('catching', {['object'] = object})
+                self.entity:changeState('catching')
             end
         end
     end

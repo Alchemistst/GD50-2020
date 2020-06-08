@@ -10,7 +10,7 @@ Player = Class{__includes = Entity}
 
 function Player:init(def)
     self.MAX_HEALTH = def.MAX_HEALTH
-
+    self.objectHeld = nil
     Entity.init(self, def)
 end
 

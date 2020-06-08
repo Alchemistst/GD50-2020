@@ -70,12 +70,13 @@ function PlayerSwingSwordState:update(dt)
         or self.swordHitbox.y + self.swordHitbox.height < object.y 
         or self.swordHitbox.x > object.x + object.width 
         or self.swordHitbox.y > object.y + object.height)then
+            -- *Break the object
             table.remove( self.dungeon.currentRoom.objects, k )
         end
     end
 
     if self.player.currentAnimation.timesPlayed > 0 then
-        self.player.currentAnimation.timesPlayed = 0
+        --self.player.currentAnimation.timesPlayed = 0
         self.player:changeState('idle')
     end
 
@@ -86,6 +87,7 @@ end
 
 function PlayerSwingSwordState:render()
     local anim = self.player.currentAnimation
+    --print(anim:getCurrentFrame()..', '..anim.timesPlayed)
     love.graphics.draw(gTextures[anim.texture], gFrames[anim.texture][anim:getCurrentFrame()],
         math.floor(self.player.x - self.player.offsetX), math.floor(self.player.y - self.player.offsetY))
 

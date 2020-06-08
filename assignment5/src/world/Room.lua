@@ -213,7 +213,7 @@ function Room:update(dt)
         for k, object in pairs(self.objects) do
             if entity:collides(object) and object.solid then
                 Room:collisionWithSolidObject(entity, object)
-                entity.bumped = true
+                -- entity.bumped = true
             end
         end
     end
@@ -227,7 +227,7 @@ function Room:update(dt)
             if object.solid then
                Room:collisionWithSolidObject(self.player, object)
                -- *Change state to idle so the texture of the playing walking doesn't overlap the pot
-                self.player:changeState('idle')
+                --self.player:changeState('idle')
             end
         end
     end
@@ -291,9 +291,21 @@ function Room:render()
 
     love.graphics.setStencilTest('less', 1)
     
+    -- *Render the object we are carrying in last place.
+    -- *Render it always behind the player, unless facing upwards, so it looks like it's carrying the pot behind it's self.
+    if self.player.objectHeld and self.player.direction == "up" then 
+        self.player.objectHeld:render(self.adjacentOffsetX, self.adjacentOffsetY)
+    end
+
     if self.player then
         self.player:render()
     end
+
+    -- *Render it always behind the player, unless facing upwards, so it looks like it's carrying the pot behind it's self.
+    if self.player.objectHeld and self.player.direction ~= "up" then 
+        self.player.objectHeld:render(self.adjacentOffsetX, self.adjacentOffsetY)
+    end
+    
 
     love.graphics.setStencilTest()
 end

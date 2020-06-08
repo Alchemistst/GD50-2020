@@ -25,7 +25,7 @@ GAME_OBJECT_DEFS = {
         }
     },
     ['pot'] = {
-        type = 'throwable-breakable',
+        type = 'throwable-breakable-holdable',
         texture = 'tiles',
         frame = 14,
         width = 16,
@@ -33,7 +33,8 @@ GAME_OBJECT_DEFS = {
         solid = true,
         defaultState = 'default',
         states = {
-            ['default'] = {frame = 14}
+            ['default'] = {frame = 14},
+            ['holding'] = {frame = 15}
         }
     },
     ['heart_consumable'] = {

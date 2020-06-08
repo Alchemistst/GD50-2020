@@ -38,10 +38,12 @@ function GameObject:init(def, x, y)
     -- *callback for when an object is hit by the player
     self.onDamaged = function() end
     
+    -- *States for objects that are holdable
+    self.lifting = false
+    self.holding = false
 end
 
 function GameObject:update(dt)
-
 end
 
 function GameObject:render(adjacentOffsetX, adjacentOffsetY)
