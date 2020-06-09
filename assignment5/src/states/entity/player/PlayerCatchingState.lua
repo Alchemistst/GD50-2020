@@ -6,23 +6,22 @@ end
 
 function PlayerCatchingState:enter(params)
     self.objectHeld = params.object
-    self.objectHeld.solid = false
-    
-    
+    self.objectHeld.item.solid = false
+    self.objectHeld.item.state = "holding"
     self.player:changeAnimation('catch-' .. self.player.direction)
     
     -- *Tween the coordinates of the object so it looks as if it's being lifted
     Timer.tween( self.player.currentAnimation.interval,
-    {[self.objectHeld] = { 
-        x = self.player.x + self.player.width / 2 - self.objectHeld.width / 2, 
-        y = self.player.y - self.objectHeld.height / 2 + 1
+    {[self.objectHeld.item] = { 
+        x = self.player.x + self.player.width / 2 - self.objectHeld.item.width / 2, 
+        y = self.player.y - self.objectHeld.item.height / 2 + 1
     }})
     
     self.player.currentAnimation:refresh()
 end
 
 function PlayerCatchingState:update(dt)
-    self.objectHeld.state = "holding"
+    
     if self.player.currentAnimation.timesPlayed > 0 then
         self.player.currentAnimation.timesPlayed = 0
         self.player:changeState('idle-pot', {['object'] = self.objectHeld})

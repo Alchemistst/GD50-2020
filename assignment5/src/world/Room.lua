@@ -23,6 +23,9 @@ function Room:init(player)
     self.objects = {}
     self:generateObjects()
 
+    --* Projectiles
+    self.projectiles = {}
+
     -- doorways that lead to other dungeon rooms
     self.doorways = {}
     table.insert(self.doorways, Doorway('top', false, self))
@@ -212,8 +215,8 @@ function Room:update(dt)
         -- *collision between entities and objects in the room
         for k, object in pairs(self.objects) do
             if entity:collides(object) and object.solid then
-                Room:collisionWithSolidObject(entity, object)
-                -- entity.bumped = true
+                    Room:collisionWithSolidObject(entity, object)
+                    -- entity.bumped = true
             end
         end
     end
@@ -231,6 +234,26 @@ function Room:update(dt)
             end
         end
     end
+
+    for k, projectile in pairs(self.projectiles) do
+        projectile:update(dt)
+        --* If projectile travels farther than 4 tiles or out bounds, destroy it
+        if projectile:checkTravelLimit() then
+            table.remove(self.objects, projectile.pos)
+            table.remove(self.projectiles, k )
+        end
+        
+        for i, object in pairs(self.objects) do
+        end
+        
+        for i, entity in pairs(self.entities) do
+            if entity:collides(projectile.projectile) then
+                table.remove(self.objects, projectile.pos)
+                table.remove(self.projectiles, k )
+                entity:kill()
+            end
+        end
+end
 end
 
 function Room:collisionWithSolidObject(entity, object)

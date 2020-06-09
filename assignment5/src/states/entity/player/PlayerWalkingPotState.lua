@@ -16,8 +16,8 @@ end
 function PlayerWalkingPotState:update(dt)
 
     -- *Update the coordinates of the object so it follows the player
-    self.objectHeld.x = self.entity.x + self.entity.width / 2 - self.objectHeld.width / 2
-    self.objectHeld.y = self.entity.y - self.objectHeld.height / 2 + 1
+    self.objectHeld.item.x = self.entity.x + self.entity.width / 2 - self.objectHeld.item.width / 2
+    self.objectHeld.item.y = self.entity.y - self.objectHeld.item.height / 2 + 1
 
     if love.keyboard.isDown('left') then
         self.entity.direction = 'left'

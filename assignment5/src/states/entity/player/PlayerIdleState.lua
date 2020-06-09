@@ -73,9 +73,8 @@ function PlayerIdleState:update(dt)
             or self.holdbox.x > object.x + object.width 
             or self.holdbox.y > object.y + object.height)then
                 -- *Pick object by changing the player's state
-                print('carry you')
                 self.entity.objectHeld = object
-                self.entity:changeState('catching', {['object'] = object})
+                self.entity:changeState('catching', {['object'] = {['item'] = object , ['pos'] = k}})
             end
         end
     end

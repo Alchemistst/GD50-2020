@@ -12,7 +12,7 @@ function PlayerIdlePotState:enter(params)
     self.entity.offsetX = 0
 
     self.objectHeld = params.object
-    self.objectHeld.solid = false
+    self.objectHeld.item.solid = false
 
     -- *Create a Holdbox to check for holdable objects in front of the player
     local direction = self.entity.direction
@@ -53,17 +53,6 @@ function PlayerIdlePotState:update(dt)
 
     if love.keyboard.wasPressed('q') then
         --self.entity:changeState('swing-sword')
-        -- *Check for objects that collide with the player holdbox.
-        for k,object in pairs(self.dungeon.currentRoom.objects) do
-            if string.match( object.type,"holdable" ) 
-            and not (self.holdbox.x + self.holdbox.width < object.x 
-            or self.holdbox.y + self.holdbox.height < object.y 
-            or self.holdbox.x > object.x + object.width 
-            or self.holdbox.y > object.y + object.height)then
-                -- *Pick object by changing the player's state
-                print('carry you')
-                self.entity:changeState('catching')
-            end
-        end
+        self.entity:changeState('throwing', {['object'] = self.objectHeld})
     end
 end
