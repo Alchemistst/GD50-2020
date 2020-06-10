@@ -39,16 +39,29 @@ function GameObject:init(def, x, y)
     self.onDamaged = function() end
     
     -- *States for objects that are holdable
-    self.lifting = false
     self.holding = false
+
+    --* Animation for object that needed it
+    self.animated = def.animated
+    if self.animated then
+        self.animations = self:createAnimations(def.states)
+        self.currentAnimation = self.animations[self.state]
+    end
+    
 end
 
 function GameObject:update(dt)
+    if self.animated then
+        self.currentAnimation:update(dt)
+    end
 end
 
 function GameObject:render(adjacentOffsetX, adjacentOffsetY)
-    if self.animation then
-
+    if self.animated then
+        local anim = self.currentAnimation
+    --print(anim:getCurrentFrame()..', '..anim.timesPlayed)
+        love.graphics.draw(gTextures[anim.texture], gFrames[anim.texture][anim:getCurrentFrame()],
+        self.x + adjacentOffsetX, self.y + adjacentOffsetY)
     else
         love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.states[self.state].frame or self.frame],
             self.x + adjacentOffsetX, self.y + adjacentOffsetY)
@@ -56,4 +69,25 @@ function GameObject:render(adjacentOffsetX, adjacentOffsetY)
     -- love.graphics.setColor(255, 0, 255, 255)
     -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
     -- love.graphics.setColor(255, 255, 255, 255)
+end
+
+function GameObject:createAnimations(animations)
+    local animationsReturned = {}
+
+    for k, animationDef in pairs(animations) do
+        animationsReturned[k] = Animation {
+            texture = animationDef.texture,
+            frames = animationDef.frames,
+            interval = animationDef.interval,
+            looping = animationDef.looping
+        }
+    end
+
+    return animationsReturned
+end
+
+function GameObject:changeState(state)
+    self.state = state
+    self.currentAnimation = self.animations[self.state]
+    self.currentAnimation:refresh()
 end

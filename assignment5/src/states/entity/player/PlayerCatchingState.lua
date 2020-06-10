@@ -7,7 +7,7 @@ end
 function PlayerCatchingState:enter(params)
     self.objectHeld = params.object
     self.objectHeld.item.solid = false
-    self.objectHeld.item.state = "holding"
+    self.objectHeld.item:changeState("holding")
     self.player:changeAnimation('catch-' .. self.player.direction)
     
     -- *Tween the coordinates of the object so it looks as if it's being lifted

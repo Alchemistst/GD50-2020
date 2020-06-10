@@ -200,6 +200,30 @@ ENTITY_DEFS = {
             },
             ['idle-up'] = {
                 frames = {47}
+            },
+            ['die-left'] = {
+                frames = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+                interval = 0.1,
+                looping = false,
+                texture = "die_skeleton"
+            },
+            ['die-right'] = {
+                frames = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+                interval = 0.1,
+                looping = false,
+                texture = "die_skeleton"
+            },
+            ['die-down'] = {
+                frames = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                interval = 0.1,
+                looping = false,
+                texture = "die_skeleton"
+            },
+            ['die-up'] = {
+                frames = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40},
+                interval = 0.1,
+                looping = false,
+                texture = "die_skeleton"
             }
         }
     },
@@ -237,6 +261,30 @@ ENTITY_DEFS = {
             },
             ['idle-up'] = {
                 frames = {86}
+            },
+            ['die-left'] = {
+                frames = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+                interval = 0.1,
+                looping = false,
+                texture = "die_slime"
+            },
+            ['die-right'] = {
+                frames = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+                interval = 0.1,
+                looping = false,
+                texture = "die_slime"
+            },
+            ['die-down'] = {
+                frames = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                interval = 0.1,
+                looping = false,
+                texture = "die_slime"
+            },
+            ['die-up'] = {
+                frames = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40},
+                interval = 0.1,
+                looping = false,
+                texture = "die_slime"
             }
         }
     },
@@ -282,6 +330,30 @@ ENTITY_DEFS = {
                 frames = {88, 89, 90, 89},
                 looping = true,
                 interval = 0.2
+            },
+            ['die-left'] = {
+                frames = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+                interval = 0.1,
+                looping = false,
+                texture = "die_bat"
+            },
+            ['die-right'] = {
+                frames = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+                interval = 0.1,
+                looping = false,
+                texture = "die_bat"
+            },
+            ['die-down'] = {
+                frames = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                interval = 0.1,
+                looping = false,
+                texture = "die_bat"
+            },
+            ['die-up'] = {
+                frames = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40},
+                interval = 0.1,
+                looping = false,
+                texture = "die_bat"
             }
         }
     },
@@ -319,6 +391,30 @@ ENTITY_DEFS = {
             },
             ['idle-up'] = {
                 frames = {92}
+            },
+            ['die-left'] = {
+                frames = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+                interval = 0.1,
+                looping = false,
+                texture = "die_ghost"
+            },
+            ['die-right'] = {
+                frames = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+                interval = 0.1,
+                looping = false,
+                texture = "die_ghost"
+            },
+            ['die-down'] = {
+                frames = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                interval = 0.1,
+                looping = false,
+                texture = "die_ghost"
+            },
+            ['die-up'] = {
+                frames = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40},
+                interval = 0.1,
+                looping = false,
+                texture = "die_ghost"
             }
         }
     },
@@ -356,7 +452,31 @@ ENTITY_DEFS = {
             },
             ['idle-up'] = {
                 frames = {95}
-            }
+            },
+            ['die-left'] = {
+                frames = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+                interval = 0.1,
+                looping = false,
+                texture = "die_spider"
+            },
+            ['die-right'] = {
+                frames = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+                interval = 0.1,
+                looping = false,
+                texture = "die_spider"
+            },
+            ['die-down'] = {
+                frames = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                interval = 0.1,
+                looping = false,
+                texture = "die_spider"
+            },
+            ['die-up'] = {
+                frames = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40},
+                interval = 0.1,
+                looping = false,
+                texture = "die_spider"
         }
+    }
     }
 }

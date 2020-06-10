@@ -41,8 +41,7 @@ function Entity:init(def)
     -- *function to kill the entity
     self.kill = function () 
         if not self.dead then
-            self.dead = true 
-            self:onDie()
+            self:changeState('die')
         end
     end
 end
@@ -84,6 +83,9 @@ end
 
 function Entity:damage(dmg)
     self.health = self.health - dmg
+    if self.health == 0 then
+        self:kill()
+    end
 end
 
 function Entity:goInvulnerable(duration)

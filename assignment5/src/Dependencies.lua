@@ -27,6 +27,7 @@ require 'src/states/BaseState'
 
 require 'src/states/entity/EntityIdleState'
 require 'src/states/entity/EntityWalkState'
+require 'src/states/entity/EntityDieState'
 
 require 'src/states/entity/player/PlayerIdleState'
 require 'src/states/entity/player/PlayerSwingSwordState'
@@ -50,7 +51,13 @@ gTextures = {
     ['hearts'] = love.graphics.newImage('graphics/hearts.png'),
     ['switches'] = love.graphics.newImage('graphics/switches.png'),
     ['entities'] = love.graphics.newImage('graphics/entities.png'),
-    ['hearts_consumable'] = love.graphics.newImage('graphics/hearts_consumable.png')
+    ['hearts_consumable'] = love.graphics.newImage('graphics/hearts_consumable.png'),
+    ['breaking_pot'] = love.graphics.newImage('graphics/breaking_pot.png'),
+    ['die_skeleton'] = love.graphics.newImage('graphics/die_skeleton.png'),
+    ['die_spider'] = love.graphics.newImage('graphics/die_spider.png'),
+    ['die_slime'] = love.graphics.newImage('graphics/die_slime.png'),
+    ['die_ghost'] = love.graphics.newImage('graphics/die_ghost.png'),
+    ['die_bat'] = love.graphics.newImage('graphics/die_bat.png')
 }
 
 gFrames = {
@@ -62,7 +69,13 @@ gFrames = {
     ['entities'] = GenerateQuads(gTextures['entities'], 16, 16),
     ['hearts'] = GenerateQuads(gTextures['hearts'], 16, 16),
     ['switches'] = GenerateQuads(gTextures['switches'], 16, 18),
-    ['hearts_consumable'] = GenerateQuads(gTextures['hearts_consumable'], 7, 7)
+    ['hearts_consumable'] = GenerateQuads(gTextures['hearts_consumable'], 7, 7),
+    ['breaking_pot'] = GenerateQuads(gTextures['breaking_pot'], 16, 16),
+    ['die_skeleton'] = GenerateQuads(gTextures['die_skeleton'], 16, 16),
+    ['die_spider'] = GenerateQuads(gTextures['die_spider'], 16, 16),
+    ['die_slime'] = GenerateQuads(gTextures['die_slime'], 16, 16),
+    ['die_ghost'] = GenerateQuads(gTextures['die_ghost'], 16, 16),
+    ['die_bat'] = GenerateQuads(gTextures['die_bat'], 16, 16)
 }
 
 gFonts = {

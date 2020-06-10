@@ -26,15 +26,26 @@ GAME_OBJECT_DEFS = {
     },
     ['pot'] = {
         type = 'throwable-breakable-holdable',
-        texture = 'tiles',
-        frame = 14,
         width = 16,
         height = 16,
         solid = true,
         defaultState = 'default',
+        animated = true,
         states = {
-            ['default'] = {frame = 14},
-            ['holding'] = {frame = 15}
+            ['default'] = {
+                frames = {14},
+                texture = 'tiles'
+            },
+            ['holding'] = {
+                frames = {15},
+                texture = 'tiles'
+            },
+            ['break'] = {
+                frames = {1, 2, 3, 4, 5, 6},
+                interval = 0.10,
+                looping = false,
+                texture = 'breaking_pot'
+            }
         }
     },
     ['heart_consumable'] = {

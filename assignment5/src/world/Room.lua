@@ -72,7 +72,8 @@ function Room:generateEntities()
 
         self.entities[i].stateMachine = StateMachine {
             ['walk'] = function() return EntityWalkState(self.entities[i]) end,
-            ['idle'] = function() return EntityIdleState(self.entities[i]) end
+            ['idle'] = function() return EntityIdleState(self.entities[i]) end,
+            ['die'] = function() return EntityDieState(self.entities[i]) end
         }
 
         -- *Define behaviour for when an entity dies
@@ -193,10 +194,13 @@ function Room:update(dt)
         local entity = self.entities[i]
 
         -- remove entity from the table if health is <= 0
+        --[[
         if entity.health <= 0 then
             entity:kill()
             -- entity.dead = true
-        elseif not entity.dead then
+        else
+        ]]
+        if not entity.dead then
             entity:processAI({room = self}, dt)
             entity:update(dt)
         end
@@ -223,6 +227,11 @@ function Room:update(dt)
 
     for k, object in pairs(self.objects) do
         object:update(dt)
+        if object.animated 
+        and not object.currentAnimation.looping 
+        and object.currentAnimation.timesPlayed > 0 then
+            table.remove(self.objects, k)
+        end
         -- trigger collision callback on object
         if self.player:collides(object) then            
             object:onCollide()
@@ -239,7 +248,8 @@ function Room:update(dt)
         projectile:update(dt)
         --* If projectile travels farther than 4 tiles or out bounds, destroy it
         if projectile:checkTravelLimit() then
-            table.remove(self.objects, projectile.pos)
+            projectile.projectile:changeState("break")
+            --table.remove(self.objects, projectile.pos)
             table.remove(self.projectiles, k )
         end
         
@@ -248,7 +258,7 @@ function Room:update(dt)
         
         for i, entity in pairs(self.entities) do
             if entity:collides(projectile.projectile) then
-                table.remove(self.objects, projectile.pos)
+                projectile.projectile:changeState("break")
                 table.remove(self.projectiles, k )
                 entity:kill()
             end
