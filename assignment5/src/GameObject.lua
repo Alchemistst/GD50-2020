@@ -91,3 +91,8 @@ function GameObject:changeState(state)
     self.currentAnimation = self.animations[self.state]
     self.currentAnimation:refresh()
 end
+
+function GameObject:replaceType(old, new)
+    self.type = string.gsub(self.type, "-"..old, new)
+    print(self.type)
+end

@@ -71,7 +71,9 @@ function PlayerSwingSwordState:update(dt)
         or self.swordHitbox.x > object.x + object.width 
         or self.swordHitbox.y > object.y + object.height)then
             -- *Break the object
-            table.remove( self.dungeon.currentRoom.objects, k )
+            object:changeState('break')
+            object:replaceType('holdable', '')
+            --table.remove( self.dungeon.currentRoom.objects, k )
         end
     end
 
