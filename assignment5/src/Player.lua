@@ -30,3 +30,7 @@ end
 function Player:heal(half_hearts) 
     self.health = math.min(self.health + half_hearts, self.MAX_HEALTH)
 end
+
+function Player:damage(dmg)
+    self.health = self.health - dmg
+end
