@@ -12,6 +12,7 @@ function Doorway:init(direction, open, room)
     self.direction = direction
     self.open = open
     self.room = room
+    self.type = "door"
 
     if direction == 'left' then
         self.x = MAP_RENDER_OFFSET_X
