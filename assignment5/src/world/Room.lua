@@ -257,7 +257,7 @@ function Room:update(dt)
         end
         
         for i, entity in pairs(self.entities) do
-            if entity:collides(projectile.projectile) then
+            if not entity.dead and entity:collides(projectile.projectile) then
                 projectile.projectile:changeState("break")
                 table.remove(self.projectiles, k )
                 entity:kill()
