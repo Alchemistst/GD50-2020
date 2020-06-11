@@ -254,6 +254,21 @@ function Room:update(dt)
         end
         
         for i, object in pairs(self.objects) do
+            if projectile:collides(object) and object.type:find('breakable')  and i ~= projectile.pos then
+                print('colliding')
+                object:changeState("break")
+                projectile.projectile:changeState("break")
+                table.remove(self.projectiles, k )
+            end
+            --[[
+                if projectile:collides(object) and object.type:find('breakable') then
+                print('boom')
+                projectile.projectile:changeState("break")
+                object:changeState("break")
+                table.remove(self.projectiles, k )
+            end
+            ]]
+            
         end
         
         for i, entity in pairs(self.entities) do

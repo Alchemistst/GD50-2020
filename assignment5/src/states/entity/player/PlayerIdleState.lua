@@ -26,21 +26,21 @@ function PlayerIdleState:enter(params)
 
     if direction == 'left' then
         holdboxWidth = 3
-        holdboxHeight = 3
+        holdboxHeight = 1
         holdboxX = self.entity.x - holdboxWidth
         holdboxY = self.entity.y + self.entity.height/2 - holdboxHeight/2
     elseif direction == 'right' then
         holdboxWidth = 3
-        holdboxHeight = 3
+        holdboxHeight = 1
         holdboxX = self.entity.x + self.entity.width
         holdboxY = self.entity.y + self.entity.height/2 - holdboxHeight/2
     elseif direction == 'up' then
-        holdboxWidth = 3
+        holdboxWidth = 1
         holdboxHeight = 3
         holdboxX = self.entity.x + self.entity.width/2 - holdboxWidth/2
         holdboxY = self.entity.y - holdboxHeight
     else
-        holdboxWidth = 3
+        holdboxWidth = 1
         holdboxHeight = 3
         holdboxX = self.entity.x + self.entity.width/2 - holdboxWidth/2
         holdboxY = self.entity.y + self.entity.height

@@ -41,7 +41,7 @@ function GameObject:init(def, x, y)
     -- *States for objects that are holdable
     self.holding = false
 
-    --* Animation for object that needed it
+    --* Animation for objects that needed it
     self.animated = def.animated
     if self.animated then
         self.animations = self:createAnimations(def.states)
@@ -96,3 +96,4 @@ function GameObject:replaceType(old, new)
     self.type = string.gsub(self.type, "-"..old, new)
     print(self.type)
 end
+

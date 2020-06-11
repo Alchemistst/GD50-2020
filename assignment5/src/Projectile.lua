@@ -69,3 +69,9 @@ function Projectile:checkTravelLimit()
         return self.travelLimitY < self.projectile.y + self.projectile.height
     end
 end
+
+--* Collision detection for the projectile
+function Projectile:collides(target)
+    return not (self.projectile.x + self.projectile.width < target.x or self.projectile.x > target.x + target.width or
+                self.projectile.y + self.projectile.height < target.y or self.projectile.y > target.y + target.height)
+end
