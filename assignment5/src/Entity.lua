@@ -36,6 +36,9 @@ function Entity:init(def)
 
     self.dead = false
 
+    --* whether or not the entity is hostile
+    self.hostile = def.hostile
+
     -- *function triggered when entity dies
     self.onDie = function () end
     -- *function to kill the entity
@@ -140,8 +143,4 @@ function Entity:render(adjacentOffsetX, adjacentOffsetY)
     self.stateMachine:render()
     love.graphics.setColor(255, 255, 255, 255)
     self.x, self.y = self.x - (adjacentOffsetX or 0), self.y - (adjacentOffsetY or 0)
-
-    love.graphics.setColor(255, 0, 255, 255)
-    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-    love.graphics.setColor(255, 255, 255, 255)
 end

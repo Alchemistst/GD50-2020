@@ -77,25 +77,25 @@ ENTITY_DEFS = {
             },
             ['catch-left'] = {
                 frames = {10, 11, 12},
-                interval = 0.5,
+                interval = 0.35,
                 looping = false,
                 texture = 'character-lift-pot'
             },
             ['catch-right'] = {
                 frames = {4, 5, 6},
-                interval = 0.5,
+                interval = 0.35,
                 looping = false,
                 texture = 'character-lift-pot'
             },
             ['catch-down'] = {
                 frames = {1, 2, 3},
-                interval = 0.5,
+                interval = 0.35,
                 looping = false,
                 texture = 'character-lift-pot'
             },
             ['catch-up'] = {
                 frames = {7, 8, 9},
-                interval = 0.5,
+                interval = 0.35,
                 looping = false,
                 texture = 'character-lift-pot'
             },
@@ -168,6 +168,7 @@ ENTITY_DEFS = {
     },
     ['skeleton'] = {
         texture = 'entities',
+        hostile = true,
         animations = {
             ['walk-left'] = {
                 frames = {22, 23, 24, 23},
@@ -229,6 +230,7 @@ ENTITY_DEFS = {
     },
     ['slime'] = {
         texture = 'entities',
+        hostile = true,
         animations = {
             ['walk-left'] = {
                 frames = {61, 62, 63, 62},
@@ -290,6 +292,7 @@ ENTITY_DEFS = {
     },
     ['bat'] = {
         texture = 'entities',
+        hostile = true,
         animations = {
             ['walk-left'] = {
                 frames = {64, 65, 66, 65},
@@ -359,6 +362,7 @@ ENTITY_DEFS = {
     },
     ['ghost'] = {
         texture = 'entities',
+        hostile = true,
         animations = {
             ['walk-left'] = {
                 frames = {67, 68, 69, 68},
@@ -420,6 +424,7 @@ ENTITY_DEFS = {
     },
     ['spider'] = {
         texture = 'entities',
+        hostile = true,
         animations = {
             ['walk-left'] = {
                 frames = {70, 71, 72, 71},

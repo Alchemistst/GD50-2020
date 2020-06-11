@@ -52,11 +52,11 @@ function Projectile:update(dt)
 end
 
 --* Check for projectile travelling farther than 4 tiles or out bounds
-function Projectile:checkTravelLimit()
+function Projectile:checkTravelLimit(direction)
     if self.projectile.x + self.projectile.width >= MAP_WIDTH * TILE_SIZE + MAP_RENDER_OFFSET_X 
     or self.projectile.x <= MAP_RENDER_OFFSET_X
     or self.projectile.y + self.projectile.height >= MAP_HEIGHT * TILE_SIZE + MAP_RENDER_OFFSET_Y
-    or self.projectile.y <= MAP_RENDER_OFFSET_Y then
+    or (self.projectile.y <= MAP_RENDER_OFFSET_Y and direction == "up" )then
         return true
     end
     if self.direction == 'left' then

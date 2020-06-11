@@ -67,7 +67,8 @@ function Room:generateEntities()
             width = 16,
             height = 16,
 
-            health = 1
+            health = 1,
+            hostile = ENTITY_DEFS[type].hostile
         })
 
         self.entities[i].stateMachine = StateMachine {
@@ -206,7 +207,7 @@ function Room:update(dt)
         end
 
         -- collision between the player and entities in the room
-        if not entity.dead and self.player:collides(entity) and not self.player.invulnerable then
+        if not entity.dead and self.player:collides(entity) and not self.player.invulnerable and entity.hostile then
             gSounds['hit-player']:play()
             self.player:damage(1)
             self.player:goInvulnerable(1.5)
@@ -247,12 +248,13 @@ function Room:update(dt)
     for k, projectile in pairs(self.projectiles) do
         projectile:update(dt)
         --* If projectile travels farther than 4 tiles or out bounds, destroy it
-        if projectile:checkTravelLimit() then
+        if projectile:checkTravelLimit(self.player.direction) then
             projectile.projectile:changeState("break")
             --table.remove(self.objects, projectile.pos)
             table.remove(self.projectiles, k )
         end
-        
+
+        --* If projectile collides with breakable objects, break both
         for i, object in pairs(self.objects) do
             if projectile:collides(object) and object.type:find('breakable')  and i ~= projectile.pos then
                 print('colliding')
@@ -260,17 +262,10 @@ function Room:update(dt)
                 projectile.projectile:changeState("break")
                 table.remove(self.projectiles, k )
             end
-            --[[
-                if projectile:collides(object) and object.type:find('breakable') then
-                print('boom')
-                projectile.projectile:changeState("break")
-                object:changeState("break")
-                table.remove(self.projectiles, k )
-            end
-            ]]
             
         end
         
+        --* If projectile collides with entity, kill the entity
         for i, entity in pairs(self.entities) do
             if not entity.dead and entity:collides(projectile.projectile) then
                 projectile.projectile:changeState("break")
