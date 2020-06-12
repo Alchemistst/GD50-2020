@@ -94,6 +94,5 @@ end
 
 function GameObject:replaceType(old, new)
     self.type = string.gsub(self.type, "-"..old, new)
-    print(self.type)
 end
 

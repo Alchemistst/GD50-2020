@@ -87,6 +87,7 @@ function Room:generateEntities()
                     self.entities[i].y + self.entities[i].height / 2 - GAME_OBJECT_DEFS['heart_consumable'].width/2 
                 )
                 heart.onConsume = function (player) 
+                    gSounds['recover']:play()
                     player:heal(2)
                 end 
                 Timer.tween(0.5, {
@@ -252,15 +253,16 @@ function Room:update(dt)
             projectile.projectile:changeState("break")
             --table.remove(self.objects, projectile.pos)
             table.remove(self.projectiles, k )
+            gSounds['pot_breaks']:play()
         end
 
         --* If projectile collides with breakable objects, break both
         for i, object in pairs(self.objects) do
             if projectile:collides(object) and object.type:find('breakable')  and i ~= projectile.pos then
-                print('colliding')
                 object:changeState("break")
                 projectile.projectile:changeState("break")
                 table.remove(self.projectiles, k )
+                gSounds['pot_breaks']:play()
             end
             
         end
@@ -271,6 +273,7 @@ function Room:update(dt)
                 projectile.projectile:changeState("break")
                 table.remove(self.projectiles, k )
                 entity:kill()
+                gSounds['pot_breaks']:play()
             end
         end
 end
