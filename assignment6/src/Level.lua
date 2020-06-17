@@ -10,7 +10,7 @@ Level = Class{}
 
 function Level:init()
     -- create a new "world" (where physics take place), with no x gravity
-    -- and 30 units of Y gravity (for downward force)
+    -- and 300 units of Y gravity (for downward force)
     self.world = love.physics.newWorld(0, 300)
 
     -- bodies we will destroy after the world update cycle; destroying these in the
@@ -21,14 +21,14 @@ function Level:init()
     -- one for different stages of any given collision
     function beginContact(a, b, coll)
         local types = {}
-        types[a:getUserData()] = true
-        types[b:getUserData()] = true
+        types[a:getUserData()['group']] = true
+        types[b:getUserData()['group']] = true
 
         -- if we collided between both an alien and an obstacle...
         if types['Obstacle'] and types['Player'] then
 
             -- destroy the obstacle if player's combined velocity is high enough
-            if a:getUserData() == 'Obstacle' then
+            if a:getUserData()['group'] == 'Obstacle' then
                 local velX, velY = b:getBody():getLinearVelocity()
                 local sumVel = math.abs(velX) + math.abs(velY)
 
@@ -49,7 +49,7 @@ function Level:init()
         if types['Obstacle'] and types['Alien'] then
 
             -- destroy the alien if falling debris is falling fast enough
-            if a:getUserData() == 'Obstacle' then
+            if a:getUserData()['group'] == 'Obstacle' then
                 local velX, velY = a:getBody():getLinearVelocity()
                 local sumVel = math.abs(velX) + math.abs(velY)
 
@@ -70,7 +70,7 @@ function Level:init()
         if types['Player'] and types['Alien'] then
 
             -- destroy the alien if player is traveling fast enough
-            if a:getUserData() == 'Player' then
+            if a:getUserData()['group'] == 'Player' then
                 local velX, velY = a:getBody():getLinearVelocity()
                 local sumVel = math.abs(velX) + math.abs(velY)
                 
@@ -124,7 +124,7 @@ function Level:init()
     self.edgeShape = love.physics.newEdgeShape(0, 0, VIRTUAL_WIDTH * 3, 0)
 
     -- spawn an alien to try and destroy
-    table.insert(self.aliens, Alien(self.world, 'square', VIRTUAL_WIDTH - 80, VIRTUAL_HEIGHT - TILE_SIZE - ALIEN_SIZE / 2, 'Alien'))
+    table.insert(self.aliens, Alien(self.world, 'square', VIRTUAL_WIDTH - 80, VIRTUAL_HEIGHT - TILE_SIZE - ALIEN_SIZE / 2, {['group']='Alien'}))
 
     -- spawn a few obstacles
     table.insert(self.obstacles, Obstacle(self.world, 'vertical',
@@ -138,7 +138,7 @@ function Level:init()
     self.groundBody = love.physics.newBody(self.world, -VIRTUAL_WIDTH, VIRTUAL_HEIGHT - 35, 'static')
     self.groundFixture = love.physics.newFixture(self.groundBody, self.edgeShape)
     self.groundFixture:setFriction(0.5)
-    self.groundFixture:setUserData('Ground')
+    self.groundFixture:setUserData({['group']='Ground'})
 
     -- background graphics
     self.background = Background()

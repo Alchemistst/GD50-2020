@@ -44,11 +44,19 @@ gTextures = {
     ['wood'] = love.graphics.newImage('graphics/wood.png'),
 
     -- arrow for trajectory
-    ['arrow'] = love.graphics.newImage('graphics/arrow.png')
+    ['arrow'] = love.graphics.newImage('graphics/arrow.png'),
+
+    --* round aliens
+    ['round_aliens'] = love.graphics.newImage('graphics/round_aliens.png'),
+
+    --* square aliens
+    ['square_aliens'] = love.graphics.newImage('graphics/square_aliens.png')
 }
 
 gFrames = {
     ['aliens'] = GenerateQuads(gTextures['aliens'], 35, 35),
+    ['round_aliens'] = GenerateQuads(gTextures['round_aliens'], 35, 35),
+    ['square_aliens'] = GenerateQuads(gTextures['square_aliens'], 35, 35),
     ['tiles'] = GenerateQuads(gTextures['tiles'], 35, 35),
 
     ['wood'] = {

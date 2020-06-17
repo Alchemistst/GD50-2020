@@ -30,6 +30,8 @@ function AlienLaunchMarker:init(world)
 
     -- our alien we will eventually spawn
     self.alien = nil
+    --* Reference to the type of alien that will be generated
+    self.alienType = TYPES_OF_ALIEN[math.random(1,2)]
 end
 
 function AlienLaunchMarker:update(dt)
@@ -49,7 +51,7 @@ function AlienLaunchMarker:update(dt)
             self.launched = true
 
             -- spawn new alien in the world, passing in user data of player
-            self.alien = Alien(self.world, 'round', self.shiftedX, self.shiftedY, 'Player')
+            self.alien = Alien(self.world, 'round', self.shiftedX, self.shiftedY, {['group']='Player', ['type']=self.alienType})
 
             -- apply the difference between current X,Y and base X,Y as launch vector impulse
             self.alien.body:setLinearVelocity((self.baseX - self.shiftedX) * 10, (self.baseY - self.shiftedY) * 10)
@@ -74,8 +76,9 @@ function AlienLaunchMarker:render()
     if not self.launched then
         
         -- render base alien, non physics based
-        love.graphics.draw(gTextures['aliens'], gFrames['aliens'][9], 
+        love.graphics.draw(gTextures['round_aliens'], gFrames['round_aliens'][self.alienType], 
             self.shiftedX - 17.5, self.shiftedY - 17.5)
+        
 
         if self.aiming then
             

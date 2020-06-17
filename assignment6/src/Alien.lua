@@ -24,7 +24,7 @@ function Alien:init(world, type, x, y, userData)
         self.sprite = math.random(5)
     else
         self.shape = love.physics.newCircleShape(17.5)
-        self.sprite = 9
+        self.sprite = userData['type'] 
     end
 
     self.fixture = love.physics.newFixture(self.body, self.shape)
@@ -36,7 +36,7 @@ function Alien:init(world, type, x, y, userData)
 end
 
 function Alien:render()
-    love.graphics.draw(gTextures['aliens'], gFrames['aliens'][self.sprite],
+    love.graphics.draw(gTextures[self.type..'_aliens'], gFrames[self.type..'_aliens'][self.sprite],
         math.floor(self.body:getX()), math.floor(self.body:getY()), self.body:getAngle(),
         1, 1, 17.5, 17.5)
 end
