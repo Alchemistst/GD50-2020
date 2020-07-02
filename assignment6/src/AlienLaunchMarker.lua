@@ -30,6 +30,7 @@ function AlienLaunchMarker:init(world)
 
     -- our alien we will eventually spawn
     self.alien = nil
+
     --* Reference to the type of alien that will be generated
     self.alienType = TYPES_OF_ALIEN[math.random(1,2)]
 end
@@ -60,6 +61,9 @@ function AlienLaunchMarker:update(dt)
             self.alien.fixture:setRestitution(0.4)
             self.alien.body:setAngularDamping(1)
 
+            --* Extra aliens for special abilities
+            self.extraAliens = {}
+
             -- we're no longer aiming
             self.aiming = false
 
@@ -69,6 +73,13 @@ function AlienLaunchMarker:update(dt)
             self.shiftedX = math.min(self.baseX + 30, math.max(x, self.baseX - 30))
             self.shiftedY = math.min(self.baseY + 30, math.max(y, self.baseY - 30))
         end
+    else
+    --* Once launched, check for key space to activate special abilities.
+        if love.keyboard.wasPressed('space') and not self.alien.firstCollision then
+            self.alien.firstCollision = true
+            self.alien.specialAbility(self)
+        end
+
     end
 end
 
@@ -78,7 +89,6 @@ function AlienLaunchMarker:render()
         -- render base alien, non physics based
         love.graphics.draw(gTextures['round_aliens'], gFrames['round_aliens'][self.alienType], 
             self.shiftedX - 17.5, self.shiftedY - 17.5)
-        
 
         if self.aiming then
             
@@ -110,5 +120,11 @@ function AlienLaunchMarker:render()
         love.graphics.setColor(255, 255, 255, 255)
     else
         self.alien:render()
+
+         --* render extra aliens if any
+         for i, alien in pairs(self.extraAliens) do
+                alien:render()
+        end
+        
     end
 end
