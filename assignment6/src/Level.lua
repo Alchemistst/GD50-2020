@@ -17,6 +17,10 @@ function Level:init()
     -- actual collision callbacks can cause stack overflow and other errors
     self.destroyedBodies = {}
 
+    
+    --* Takes pairs of coordinates for the particle emiters to be drawn
+    self.particleSystems = {}
+
     -- define collision callbacks for our world; the World object expects four,
     -- one for different stages of any given collision
     function beginContact(a, b, coll)
@@ -57,6 +61,7 @@ function Level:init()
 
                 if sumVel > 20 then
                     table.insert(self.destroyedBodies, b:getBody())
+                    
                 end
             else
                 local velX, velY = b:getBody():getLinearVelocity()
@@ -152,6 +157,11 @@ function Level:init()
 end
 
 function Level:update(dt)
+    --* Update particle systems
+    for i, system in pairs(self.particleSystems) do
+        system:update(dt)
+    end
+
     -- update launch marker, which shows trajectory
     self.launchMarker:update(dt)
 
@@ -160,6 +170,13 @@ function Level:update(dt)
 
     -- destroy all bodies we calculated to destroy during the update call
     for k, body in pairs(self.destroyedBodies) do
+        for i, alien in pairs(self.aliens) do 
+            if alien.body == body then
+                alien.particleSystem:setPosition(alien.body:getX(), alien.body:getY())
+                table.insert(self.particleSystems, alien.particleSystem)
+                alien.particleSystem:emit(64)
+            end
+        end
         if not body:isDestroyed() then 
             body:destroy()
         end
@@ -205,9 +222,11 @@ function Level:update(dt)
                 local xVel, yVel = alien.body:getLinearVelocity()
                 
                 -- if we fired our alien to the left or it's almost done rolling, respawn
-                if xPos < 0 - alien.shape:getRadius() or (math.abs(xVel) + math.abs(yVel) < 1.5) or xPos > VIRTUAL_WIDTH + alien.shape:getRadius() then
+                if xPos < 0 - alien.shape:getRadius() * 2 or (math.abs(xVel) + math.abs(yVel) < 1.5) or xPos > VIRTUAL_WIDTH + alien.shape:getRadius() * 2 then
+                    alien.particleSystem:setPosition(alien.body:getX(), alien.body:getY())
+                    table.insert(self.particleSystems, alien.particleSystem)
+                    alien.particleSystem:emit(64)
                     alien.body:destroy()
-                    --alien.sprite = 4
                     table.remove(allAliens, i)
                 end
         end
@@ -237,6 +256,10 @@ function Level:render()
 
     for k, obstacle in pairs(self.obstacles) do
         obstacle:render()
+    end
+
+    for i, system in pairs(self.particleSystems) do
+        love.graphics.draw(system)
     end
 
     -- render instruction text if we haven't launched bird

@@ -50,7 +50,10 @@ gTextures = {
     ['round_aliens'] = love.graphics.newImage('graphics/round_aliens.png'),
 
     --* square aliens
-    ['square_aliens'] = love.graphics.newImage('graphics/square_aliens.png')
+    ['square_aliens'] = love.graphics.newImage('graphics/square_aliens.png'),
+
+    --* particles
+    ['particles'] =  love.graphics.newImage('graphics/particle.png')
 }
 
 gFrames = {
