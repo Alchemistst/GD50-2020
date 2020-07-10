@@ -24,7 +24,13 @@
 
 require 'src/Dependencies'
 
-function love.load()
+function love.load(arg)
+    
+    if arg[2] == "d" then
+        DEBUG_MODE = true
+        KEY_PRESSED = ""
+    end
+    
     math.randomseed(os.time())
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('Angry 50')
@@ -91,10 +97,27 @@ function love.update(dt)
         love.mouse.keysPressed = {}
         love.mouse.keysReleased = {}
     end
+    --[[
+
+if DEBUG_MODE and love.keyboard.isDown('space') then
+        KEY_PRESSED = "SPACE"
+    end
+    if DEBUG_MODE and love.keyboard.isUp('space') then
+        KEY_PRESSED = "SPACE"
+    end
+    ]]
+    
+
 end
 
 function love.draw()
     push:start()
     gStateMachine:render()
+
+    if DEBUG_MODE and love.keyboard.isDown("space") then
+        love.graphics.setColor(220, 20, 60)
+        love.graphics.setFont(gFonts['huge'])
+        love.graphics.printf("SPACE", 20, 20, 200)
+    end
     push:finish()
 end
