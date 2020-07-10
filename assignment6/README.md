@@ -3,7 +3,7 @@ In this assigment we were handed the task of implementing the following features
 * Add an alien that will divide itself in three (as the blue bird from Angry Birds) when the spacebar is pressed and only if the alien hasn't collided with anything yet.
 
 As an extra, I also implemented:
-* Improved how the game restarted after throwing an alien.
+* Improved how the game restarts after throwing an alien.
 * Added particle systems for alien's explosions, similar to Angry Birds.
   
 ## Requirements
@@ -11,7 +11,7 @@ You need **Lua** and **Löve2D 0.10.2**.
 
 ## Usage
 1. Download this folder from the repository.
-2. On a terminal, access ``` /assigment5 ``` directory.
+2. On a terminal, access ``` /assigment6 ``` directory.
 3. Run ``` love . ```
 
 ## Screenshots
